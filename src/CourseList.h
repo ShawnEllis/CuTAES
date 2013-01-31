@@ -9,7 +9,10 @@ public:
     static CourseList* instance();
     virtual ~CourseList();
 
-    void show();
+    virtual void draw();
+
+    static void handleBackPressed();
+    static void handleCoursePressed();
 
 private:
     CourseList();

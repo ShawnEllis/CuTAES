@@ -3,6 +3,7 @@
 
 #include <curses.h>
 #include "List.h"
+#include <string>
 
 template <class T>
 class ListNode;
@@ -11,10 +12,11 @@ class ActionTrigger;
 
 class Panel {
 public:
-    Panel();
+    Panel(const std::string &t);
     virtual ~Panel();
 
     virtual void show();
+    virtual void draw() {}
     virtual void waitForInput();
 
     void add(Component *c);
@@ -25,6 +27,7 @@ public:
 
 protected:
     WINDOW *m_pWindow;
+    const std::string &title;
 
     List<Component*> m_componentList;
     ListNode<Component*> *pSelNode;

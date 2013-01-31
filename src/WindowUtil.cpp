@@ -5,15 +5,6 @@
 
 using namespace std;
 
-void WindowUtil::createTitledWindow(WINDOW **pWindow, const string &title) {
-    //Create the window
-    *pWindow = newwin(CuTAES::DEF_H, CuTAES::DEF_W, 0, 0);
-    //Decorate the window
-    box(*pWindow, 0 , 0);
-    mvwprintw(*pWindow, 1, (CuTAES::DEF_W - title.size()) / 2, title.data());
-    drawHLine(*pWindow, 1, 2, CuTAES::DEF_W - 2);
-}
-
 void WindowUtil::drawHLine(WINDOW *pWindow, int x, int y, int l, char c) {
     for (int i = x; i < x + l; i++) {
         mvwaddch(pWindow, y, i, c);

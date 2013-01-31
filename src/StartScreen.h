@@ -9,7 +9,7 @@ public:
     static StartScreen* instance();
     virtual ~StartScreen();
 
-    virtual void show();
+    virtual void draw();
 
     static void handleExitPressed();
     static void handleCreatePressed();

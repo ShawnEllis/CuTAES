@@ -14,10 +14,8 @@ StartScreen* StartScreen::instance() {
     return m_pInstance;
 }
 
-StartScreen::StartScreen() {
-    WindowUtil::createTitledWindow(&m_pWindow, "Start Screen");
+StartScreen::StartScreen() : Panel("Start Screen") {
     //Create buttons
-
     Button *pButton = new Button(this, "Create an Application", CuTAES::DEF_W / 2, CuTAES::DEF_H/2 - 3);
     pButton->setEventHandler(handleCreatePressed);
     this->add(pButton);
@@ -28,13 +26,11 @@ StartScreen::StartScreen() {
 }
 
 StartScreen::~StartScreen() {
-    delwin(m_pWindow);
 }
 
-void StartScreen::show() {
+void StartScreen::draw() {
     //Show the window
-    Panel::show();
-    Panel::waitForInput();
+    
 }
 
 //Event Handlers

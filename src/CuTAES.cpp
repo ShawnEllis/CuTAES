@@ -27,6 +27,7 @@ CuTAES::CuTAES() {
     refresh();
 
     StartScreen::instance()->show();
+    endwin();
 }
 
 void CuTAES::onExit() {
