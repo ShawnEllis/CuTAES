@@ -14,13 +14,6 @@ void WindowUtil::createTitledWindow(WINDOW **pWindow, const string &title) {
     drawHLine(*pWindow, 1, 2, CuTAES::DEF_W - 2);
 }
 
-void WindowUtil::createButton(Panel *pPanel, const string &text, int x, int y) {
-    Button *pButton = new Button(pPanel->getWindow(), text);
-    pButton->setX(x - (pButton->getWidth() / 2));
-    pButton->setY(y - (pButton->getHeight() / 2));
-    pPanel->add(pButton);
-}
-
 void WindowUtil::drawHLine(WINDOW *pWindow, int x, int y, int l, char c) {
     for (int i = x; i < x + l; i++) {
         mvwaddch(pWindow, y, i, c);

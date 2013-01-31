@@ -11,6 +11,9 @@ public:
 
     virtual void show();
 
+    static void handleExitPressed();
+    static void handleCreatePressed();
+
 private:
     StartScreen();
     static StartScreen* m_pInstance;

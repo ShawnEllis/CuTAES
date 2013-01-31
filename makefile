@@ -10,13 +10,13 @@ CFLAGS = -g
 SRCDIR = src
 OBJDIR = obj
 OBJ:=$(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.cpp))
-LIB = ncurses
+LIB = -lncurses -lform
 
 $(shell [ -d "bin" ] || mkdir -p bin)
 $(shell [ -d "obj" ] || mkdir -p obj)
 
 $(OUT): $(OBJ)
-	g++ $^ -l$(LIB) -o$@
+	g++ $^ $(LIB) -o$@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/*.h
 	g++ $(CFLAGS) -c $< -o$@

@@ -38,3 +38,5 @@ obj/
 Icon?
 ehthumbs.db
 Thumbs.dba
+
+*.swp

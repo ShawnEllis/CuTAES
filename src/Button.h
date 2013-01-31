@@ -5,16 +5,24 @@
 #include <string>
 #include "Component.h"
 
+class Panel;
+
 class Button : public Component {
 public:
-	Button(WINDOW *win, const std::string &txt);
+	Button(Panel *pPanel, const std::string &txt, int cx=0, int cy=0);
     ~Button() {};
 
     virtual void draw();
 
+    virtual void registerActionTriggers();
+
+    virtual void doAction();
+
+    void setEventHandler(void(*handler)()) {eventHandler = handler;}
+
 private:
     std::string text;
-
+    void(*eventHandler)();
 };
 
 #endif //BUTTON_H

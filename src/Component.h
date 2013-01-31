@@ -3,12 +3,23 @@
 
 #include <curses.h>
 
+class Panel;
+
 class Component {
 public:
-    Component(WINDOW *win);
+    Component(Panel *pPanel);
     virtual ~Component();
 
     virtual void draw() = 0;
+
+    /*
+        Registers event triggers on pPanel.
+        Useful for components with actions;
+          eg. button uses enter as trigger for doing an action
+    */
+    virtual void registerActionTriggers() = 0;
+
+    virtual void doAction();
 
     int getX() {return x;}
     void setX(int x) {this->x = x;}
@@ -30,7 +41,7 @@ protected:
     bool m_selectable;
     bool m_selected;
 
-    WINDOW *pWindow;
+    Panel *pPanel;
 };
 
 #endif //COMPONENT_H

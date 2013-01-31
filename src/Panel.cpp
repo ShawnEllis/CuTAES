@@ -1,9 +1,12 @@
 #include "Panel.h"
 #include "Component.h"
 #include "ListNode.h"
+#include "ActionTrigger.h"
+#include <stdio.h>
 
 Panel::Panel() {
     m_componentList = *(new List<Component*>());
+    m_actionTriggerList = *(new List<ActionTrigger*>());
 }
 
 Panel::~Panel() {
@@ -43,20 +46,36 @@ void Panel::waitForInput() {
             pSelComponent = pSelNode->data;
             pSelComponent->setSelected(true);
             show();
-        } else if (c == KEY_ENTER) {
-            //Do something
-            break;
         } else {
-            break;
+            //Iterate through action triggers
+            ListNode<ActionTrigger*>* cur = m_actionTriggerList.first();
+            while (cur != 0) {
+                char buffer[50];
+                int n= sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
+                mvwprintw(getWindow(), 0, 0, buffer);
+                wrefresh(getWindow());
+                if (c == cur->data->trigger) {
+                    //Call action handler
+                    (cur->data->pComponent->*(cur->data->action))();
+                }
+                cur = cur->pNext;
+            }
+
         }
     }
 }
 
 void Panel::add(Component *c) {
     m_componentList.addBack(c);
+    c->registerActionTriggers();
     if (pSelComponent == 0 && c->isSelectable()) {
         pSelNode = m_componentList.last();
         pSelComponent = c;
         pSelComponent->setSelected(true);
     }
 }
+
+void Panel::registerAction(int t, Component *c, void(Component::*a)()) {
+    m_actionTriggerList.addBack(new ActionTrigger(t, c, a));
+}
+

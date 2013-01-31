@@ -1,10 +1,10 @@
 #ifndef COURSE_LIST_H
 #define COURSE_LIST_H
+
 #include <curses.h>
+#include "Panel.h"
 
-class Button;
-
-class CourseList {
+class CourseList : public Panel {
 public:
     static CourseList* instance();
     virtual ~CourseList();
@@ -14,8 +14,6 @@ public:
 private:
     CourseList();
     static CourseList* m_pInstance;
-    
-    WINDOW *m_pWindow;
 };
 
 #endif //COURSE_LIST_H

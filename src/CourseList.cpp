@@ -14,6 +14,9 @@ CourseList* CourseList::instance() {
 
 CourseList::CourseList() {
     WindowUtil::createTitledWindow(&m_pWindow, "Course List");
+    Button *pButton = new Button(this, "Back", CuTAES::DEF_W / 2, CuTAES::DEF_H/2 + 3);
+    this->add(pButton);
+
 }
 
 CourseList::~CourseList() {
@@ -22,7 +25,6 @@ CourseList::~CourseList() {
 
 void CourseList::show() {
     //Show the window
-	wrefresh(m_pWindow);
-
-    getch();
+	Panel::show();
+    Panel::waitForInput();
 }

@@ -11,7 +11,6 @@ class Panel;
 class WindowUtil {
 public:
 	static void createTitledWindow(WINDOW **pWindow, const std::string &title);
-    static void createButton(Panel *pPanel, const std::string &text, int cx=0, int cy=0);
 
     static void drawHLine(WINDOW *pWindow, int x, int y, int l, char c='_');
     static void drawVLine(WINDOW *pWindow, int x, int y, int l, char c='|');
