@@ -39,4 +39,5 @@ void CourseList::handleCoursePressed() {
     StudentInfoScreen *infoScr = new StudentInfoScreen();
     infoScr->show();
     delete infoScr;
+    CourseList::instance()->show();
 }

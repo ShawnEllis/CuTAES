@@ -24,7 +24,7 @@ void Panel::show() {
     wclear(m_pWindow);
     //Decorate the window
     box(m_pWindow, 0 , 0);
-//    mvwprintw(m_pWindow, 1, (CuTAES::DEF_W - title.length()) / 2, title.data());
+    mvwprintw(m_pWindow, 1, (CuTAES::DEF_W - title.length()) / 2, title.data());
     WindowUtil::drawHLine(m_pWindow, 1, 2, CuTAES::DEF_W - 2);
     ListNode<Component*>* cur = m_componentList.first();
     while (cur != 0) {
@@ -65,10 +65,12 @@ void Panel::waitForInput() {
             //Iterate through action triggers
             ListNode<ActionTrigger*>* cur = m_actionTriggerList.first();
             while (cur != 0) {
+                #ifdef DEBUG
                 char buffer[50];
                 int n= sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
                 mvwprintw(getWindow(), 0, 0, buffer);
                 wrefresh(getWindow());
+                #endif //DEBUG
                 if (c == cur->data->trigger) {
                     //Call action handler
                     (cur->data->pComponent->*(cur->data->action))();

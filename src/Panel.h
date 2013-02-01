@@ -27,7 +27,7 @@ public:
 
 protected:
     WINDOW *m_pWindow;
-    const std::string &title;
+    std::string title;
 
     List<Component*> m_componentList;
     ListNode<Component*> *pSelNode;

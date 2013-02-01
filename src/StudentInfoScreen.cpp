@@ -1,17 +1,29 @@
 #include "StudentInfoScreen.h"
 #include "CuTAES.h"
 #include "WindowUtil.h"
+#include <string>
+#include <stdlib.h>
+#include "Student.h"
+
+using namespace std;
 
 StudentInfoScreen::StudentInfoScreen() : Panel("") {
     //Create fields
     infoFields[0] = new_field(1, 32, 1, 12, 0, 0);
+    set_field_type(infoFields[0], TYPE_ALPHA, 1);
 	infoFields[1] = new_field(1, 32, 3, 12, 0, 0);
+    set_field_type(infoFields[1], TYPE_ALPHA, 1);
 	infoFields[2] = new_field(1, 32, 5, 12, 0, 0);
+    set_field_type(infoFields[2], TYPE_INTEGER, 0);
 	infoFields[3] = new_field(1, 32, 7, 12, 0, 0);
     infoFields[4] = new_field(1, 32, 9, 12, 0, 0);
 	infoFields[5] = new_field(1, 2, 11, 14, 0, 0);
+    set_field_type(infoFields[5], TYPE_INTEGER, 0);
     infoFields[6] = new_field(1, 4, 11, 24, 0, 0);
+    set_field_type(infoFields[6], TYPE_NUMERIC, 1, 1, 12);
 	infoFields[7] = new_field(1, 4, 11, 40, 0, 0);
+    set_field_type(infoFields[7], TYPE_NUMERIC, 1, 1, 12);
+    infoFields[8] = 0;
 
     for (int i = 0; i < 8; i++) {
         set_field_back(infoFields[i], A_UNDERLINE);
@@ -53,6 +65,9 @@ StudentInfoScreen::~StudentInfoScreen() {
     curs_set(0);
     unpost_form(pForm);
     free_form(pForm);
+    for (int i = 0; i < 8; i++) {
+        free_field(infoFields[i]);
+    }
     refresh();
 }
 
@@ -73,8 +88,27 @@ void StudentInfoScreen::waitForInput() {
             form_driver(pForm, REQ_NEXT_FIELD);
             form_driver(pForm, REQ_END_LINE);
             wrefresh(m_pWindow);
+        } else if (ch == KEY_LEFT) {
+            form_driver(pForm, REQ_LEFT_CHAR);
+            wrefresh(m_pWindow);
+        } else if (ch == KEY_RIGHT) {
+            form_driver(pForm, REQ_RIGHT_CHAR); //TODO: Stop right arrow working as spacebar
+            wrefresh(m_pWindow);
+        } else if (ch == KEY_BACKSPACE) {
+            form_driver(pForm, REQ_DEL_PREV);
+            wrefresh(m_pWindow);
         } else if (ch == CuTAES::KEY_ENT) {
             //TODO: Check if form is full
+            string fname = field_buffer(infoFields[0], 0);
+            string lname = field_buffer(infoFields[1], 0);
+            string num = field_buffer(infoFields[2], 0);
+            string email = field_buffer(infoFields[3], 0);
+            string major = field_buffer(infoFields[4], 0);
+//            int year = atoi(field_buffer(infoFields[5], 0));
+  //          float cgpa = field_buffer(infoFields[6], 0);
+    //        float majGpa = field_buffer(infoFields[7], 0);
+            Student *stu = new Student(fname, lname, num, email, major, 0, 10, 8);
+            stu->saveToFile();
             break;
         } else if (ch == 96) {
             //Cancel

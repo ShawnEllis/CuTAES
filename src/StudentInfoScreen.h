@@ -13,11 +13,8 @@ public:
     virtual void show();
     virtual void waitForInput();
 
-    static void handleNextPressed();
-    static void handleCancelPressed();
-
 private:
-    FIELD *infoFields[8];
+    FIELD *infoFields[9];
     FORM *pForm;
 };
 

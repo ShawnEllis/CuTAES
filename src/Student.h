@@ -6,18 +6,20 @@
 
 class Student {
 public:
-	Student(std::string &first, std::string &last,
-            std::string &num, std::string &email,
-            std::string &maj, const int year,
-            const float cgpa, const float gpa);
+	Student(const std::string &first, const std::string &last,
+            const std::string &num, const std::string &email,
+            const std::string &maj, int year,
+            float cgpa, float gpa);
 
     virtual ~Student() {};
-	
+
+	void saveToFile();
+
 private:
-    std::string &m_firstName, &m_lastName;
-    std::string &m_stuNum;
-    std::string &m_emailAddr;
-    std::string &m_major;
+    std::string m_firstName, m_lastName;
+    std::string m_stuNum;
+    std::string m_emailAddr;
+    std::string m_major;
     int m_yearStanding;
     float m_CGPA, m_majorGPA;
 };
