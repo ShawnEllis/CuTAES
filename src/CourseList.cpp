@@ -4,6 +4,7 @@
 #include "Button.h"
 #include "StartScreen.h"
 #include "StudentInfoScreen.h"
+#include "CourseInfoScreen.h"
 
 CourseList* CourseList::m_pInstance = 0;
 
@@ -38,6 +39,11 @@ void CourseList::handleBackPressed() {
 void CourseList::handleCoursePressed() {
     StudentInfoScreen *infoScr = new StudentInfoScreen();
     infoScr->show();
+    if (infoScr->isInputAccepted()) {
+        CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
+        courseInfoScr->show();
+        delete courseInfoScr;
+    }
     delete infoScr;
     CourseList::instance()->show();
 }

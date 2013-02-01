@@ -13,9 +13,12 @@ public:
     virtual void show();
     virtual void waitForInput();
 
+    bool isInputAccepted() {return m_inputAccepted;}
+
 private:
     FIELD *infoFields[9];
     FORM *pForm;
+    bool m_inputAccepted;
 };
 
 #endif //STUDENT_INFO_SCREEN_H

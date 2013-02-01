@@ -9,6 +9,8 @@
 using namespace std;
 
 StudentInfoScreen::StudentInfoScreen() : Panel("") {
+    m_inputAccepted = false;
+
     //Create fields
     infoFields[0] = new_field(1, 32, 1, 12, 0, 0);
     set_field_type(infoFields[0], TYPE_ALPHA, 1);
@@ -116,6 +118,7 @@ void StudentInfoScreen::waitForInput() {
             float majGpa = atof(field_buffer(infoFields[7], 0));
             Student *stu = new Student(fname, lname, num, email, major, year, cgpa, majGpa);
             stu->saveToFile();
+            m_inputAccepted = true;
             break;
         } else if (ch == 96) {
             //Cancel
