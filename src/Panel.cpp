@@ -67,7 +67,7 @@ void Panel::waitForInput() {
             while (cur != 0) {
                 #ifdef DEBUG
                 char buffer[50];
-                int n= sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
+                sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
                 mvwprintw(getWindow(), 0, 0, buffer);
                 wrefresh(getWindow());
                 #endif //DEBUG

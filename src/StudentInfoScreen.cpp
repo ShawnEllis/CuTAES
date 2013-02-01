@@ -4,6 +4,7 @@
 #include <string>
 #include <stdlib.h>
 #include "Student.h"
+#include "StringUtil.h"
 
 using namespace std;
 
@@ -99,15 +100,21 @@ void StudentInfoScreen::waitForInput() {
             wrefresh(m_pWindow);
         } else if (ch == CuTAES::KEY_ENT) {
             //TODO: Check if form is full
+            form_driver(pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
             string fname = field_buffer(infoFields[0], 0);
+            StringUtil::trimEnd(fname);
             string lname = field_buffer(infoFields[1], 0);
+            StringUtil::trimEnd(lname);
             string num = field_buffer(infoFields[2], 0);
+            StringUtil::trimEnd(num);
             string email = field_buffer(infoFields[3], 0);
+            StringUtil::trimEnd(email);
             string major = field_buffer(infoFields[4], 0);
-//            int year = atoi(field_buffer(infoFields[5], 0));
-  //          float cgpa = field_buffer(infoFields[6], 0);
-    //        float majGpa = field_buffer(infoFields[7], 0);
-            Student *stu = new Student(fname, lname, num, email, major, 0, 10, 8);
+            StringUtil::trimEnd(major);
+            int year = atoi(field_buffer(infoFields[5], 0));
+            float cgpa = atof(field_buffer(infoFields[6], 0));
+            float majGpa = atof(field_buffer(infoFields[7], 0));
+            Student *stu = new Student(fname, lname, num, email, major, year, cgpa, majGpa);
             stu->saveToFile();
             break;
         } else if (ch == 96) {
