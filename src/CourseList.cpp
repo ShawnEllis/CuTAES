@@ -5,6 +5,10 @@
 #include "StartScreen.h"
 #include "StudentInfoScreen.h"
 #include "CourseInfoScreen.h"
+#include <iostream>
+#include <fstream>
+
+using namespace std;
 
 CourseList* CourseList::m_pInstance = 0;
 
@@ -16,18 +20,56 @@ CourseList* CourseList::instance() {
 }
 
 CourseList::CourseList() : Panel("Course List") {
-    Button *pButton = new Button(this, "Course", CuTAES::DEF_W / 2, CuTAES::DEF_H/2 - 3);
-    pButton->setEventHandler(handleCoursePressed);
-    this->add(pButton);
-    pButton = new Button(this, "Back", CuTAES::DEF_W / 2, CuTAES::DEF_H/2 + 3);
+    //Create back button
+    Button *pButton = new Button(this, "Back", CuTAES::DEF_W / 4, CuTAES::DEF_H/2);
     pButton->setEventHandler(handleBackPressed);
     this->add(pButton);
+    //Create buttons for each course in CourseList.txt
+    ifstream file;
+    file.open("CourseList.txt");
+    if (file.is_open()) {
+        string line;
+        int n = 0;
+        while (file.good()) {
+            getline(file, line);
+            //Create a button
+            //TODO: Put buttons in scrollable panel
+            pButton = new Button(this, line, CuTAES::DEF_W / 2, 5 + 5 * n++);
+            pButton->setEventHandler(handleCoursePressed);
+            this->add(pButton);
+        }
+        file.close();
+    }
 }
 
 CourseList::~CourseList() {
 }
 
-void CourseList::draw() {
+/*
+    Handle left and right movement
+*/
+bool CourseList::handleKeyPress(int key) {
+    if (key == KEY_LEFT) {
+        //Select back button
+        pSelComponent->setSelected(false);
+        pSelNode = m_componentList.first();
+        pSelComponent = pSelNode->data;
+        pSelComponent->setSelected(true);
+        show();
+        return true;
+    } else if (key == KEY_RIGHT) {
+        //Select next item
+        pSelComponent->setSelected(false);
+        if (pSelNode->pNext != 0) {
+            pSelNode = pSelNode->pNext;
+        } else {
+            pSelNode = m_componentList.first();
+        }
+        pSelComponent = pSelNode->data;
+        pSelComponent->setSelected(true);
+        show();
+        return true;
+    }
 }
 
 //Event handlers

@@ -3,9 +3,11 @@
 #include "WindowUtil.h"
 #include <string>
 #include <stdlib.h>
-#include <stdio.h>
 #include "Student.h"
 #include "StringUtil.h"
+#include <iostream>
+#include <fstream>
+#include <time.h>
 
 using namespace std;
 
@@ -97,15 +99,18 @@ void CourseInfoScreen::waitForInput() {
             //TODO: Check if form is full
             form_driver(pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
             //Save application
-            FILE * pFile;
-            string filename = "application.txt";
-            pFile = fopen(filename.data(), "w");
-            if (pFile != 0) {
+            char buffer[50];
+            sprintf(buffer, "application%ld.txt", time(NULL));
+            ofstream file;
+            string filename = buffer;
+            file.open(filename.data());
+            if (file.is_open()) {
+                file << "Pending\n\n";
                 for (int i = 0; i < 4; i++) {
                     string str = field_buffer(infoFields[i], 0);
-                    fputs((str + "\n\n\n").data(), pFile);
+                    file << "Field " << i << "\n" << str << "\n\n\n";
                 }
-                fclose(pFile);
+                file.close();
             }
             break;
         } else if (ch == 96) {

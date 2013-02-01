@@ -87,7 +87,7 @@ void StudentInfoScreen::waitForInput() {
             form_driver(pForm, REQ_PREV_FIELD);
             form_driver(pForm, REQ_END_LINE);
             wrefresh(m_pWindow);
-        } else if (ch == KEY_DOWN) {
+        } else if (ch == KEY_DOWN || ch == 9) { //Tab
             form_driver(pForm, REQ_NEXT_FIELD);
             form_driver(pForm, REQ_END_LINE);
             wrefresh(m_pWindow);
@@ -101,7 +101,9 @@ void StudentInfoScreen::waitForInput() {
             form_driver(pForm, REQ_DEL_PREV);
             wrefresh(m_pWindow);
         } else if (ch == CuTAES::KEY_ENT) {
-            //TODO: Check if form is full
+            //For each field, get the data and check if valid.
+            //If all data is valid, create a new student and save it.
+            //This will be cleaned up for Assignment 2.
             form_driver(pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
             string fname = field_buffer(infoFields[0], 0);
             StringUtil::trimEnd(fname);
@@ -116,10 +118,19 @@ void StudentInfoScreen::waitForInput() {
             int year = atoi(field_buffer(infoFields[5], 0));
             float cgpa = atof(field_buffer(infoFields[6], 0));
             float majGpa = atof(field_buffer(infoFields[7], 0));
-            Student *stu = new Student(fname, lname, num, email, major, year, cgpa, majGpa);
-            stu->saveToFile();
-            m_inputAccepted = true;
-            break;
+            if (!fname.compare("") == 0
+                  && !lname.compare("") == 0
+                  && !num.compare("") == 0
+                  && !email.compare("") == 0
+                  && !major.compare("") == 0
+                  && year > 0 && cgpa > 0 && majGpa > 0) {
+                Student *stu = new Student(fname, lname, num, email, major, year, cgpa, majGpa);
+                stu->saveToFile();
+                delete stu;
+                m_inputAccepted = true;
+                break;
+            }
+            form_driver(pForm, REQ_PREV_FIELD); //Stay on current line
         } else if (ch == 96) {
             //Cancel
             break;

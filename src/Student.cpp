@@ -1,5 +1,6 @@
 #include "Student.h"
-#include <stdio.h>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -22,19 +23,18 @@ Student::Student(const string &first,
 }
 
 void Student::saveToFile() {
-    FILE * pFile;
     string filename = m_stuNum + ".txt";
-    pFile = fopen(filename.data(), "w");
-    if (pFile != 0) {
-        fputs((m_firstName + "\n").data(), pFile);
-        fputs((m_lastName + "\n").data(), pFile);
-        fputs((m_stuNum + "\n").data(), pFile);
-        fputs((m_emailAddr + "\n").data(), pFile);
-        fputs((m_major + "\n").data(), pFile);
-        char buffer[50];
-        sprintf(buffer, "%d\n%f\n%f", m_yearStanding, m_CGPA, m_majorGPA);
-        string str = buffer;
-        fputs((str + "\n").data(), pFile);
-        fclose(pFile);
+    ofstream file;
+    file.open(filename.data());
+    if (file.is_open()) {
+        file << m_firstName << "\n";
+        file << m_lastName << "\n";
+        file << m_stuNum << "\n";
+        file << m_emailAddr << "\n";
+        file << m_major << "\n";
+        file << m_yearStanding << "\n";
+        file << m_CGPA << "\n";
+        file << m_majorGPA << "\n";
+        file.close();
     }
 }

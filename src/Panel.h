@@ -16,8 +16,15 @@ public:
     virtual ~Panel();
 
     virtual void show();
-    virtual void draw() {}
+    virtual void draw() {} //used by subclasses to draw special decorations
+
     virtual void waitForInput();
+
+    /*
+        Used by subclasses to handle special input.
+        Return true to consume the event.
+    */
+    virtual bool handleKeyPress(int key) {return false;} 
 
     void add(Component *c);
 

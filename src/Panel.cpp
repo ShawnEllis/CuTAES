@@ -39,45 +39,47 @@ void Panel::show() {
 void Panel::waitForInput() {
     while (true) {
         int c = getch();
-        if (c == KEY_UP) {
-            //Select prev item
-            pSelComponent->setSelected(false);
-            if (pSelNode->pPrev != 0) {
-                pSelNode = pSelNode->pPrev;
-            } else {
-                pSelNode = m_componentList.last();
-            }
-            pSelComponent = pSelNode->data;
-            pSelComponent->setSelected(true);
-            show();
-        } else if (c == KEY_DOWN) {
-            //Select next item
-            pSelComponent->setSelected(false);
-            if (pSelNode->pNext != 0) {
-                pSelNode = pSelNode->pNext;
-            } else {
-                pSelNode = m_componentList.first();
-            }
-            pSelComponent = pSelNode->data;
-            pSelComponent->setSelected(true);
-            show();
-        } else {
-            //Iterate through action triggers
-            ListNode<ActionTrigger*>* cur = m_actionTriggerList.first();
-            while (cur != 0) {
-                #ifdef DEBUG
-                char buffer[50];
-                sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
-                mvwprintw(getWindow(), 0, 0, buffer);
-                wrefresh(getWindow());
-                #endif //DEBUG
-                if (c == cur->data->trigger) {
-                    //Call action handler
-                    (cur->data->pComponent->*(cur->data->action))();
+        if (!handleKeyPress(c)) { //Event is not consumed
+            if (c == KEY_UP) {
+                //Select prev item
+                pSelComponent->setSelected(false);
+                if (pSelNode->pPrev != 0) {
+                    pSelNode = pSelNode->pPrev;
+                } else {
+                    pSelNode = m_componentList.last();
                 }
-                cur = cur->pNext;
-            }
+                pSelComponent = pSelNode->data;
+                pSelComponent->setSelected(true);
+                show();
+            } else if (c == KEY_DOWN) {
+                //Select next item
+                pSelComponent->setSelected(false);
+                if (pSelNode->pNext != 0) {
+                    pSelNode = pSelNode->pNext;
+                } else {
+                    pSelNode = m_componentList.first();
+                }
+                pSelComponent = pSelNode->data;
+                pSelComponent->setSelected(true);
+                show();
+            } else {
+                //Iterate through action triggers
+                ListNode<ActionTrigger*>* cur = m_actionTriggerList.first();
+                while (cur != 0) {
+                    #ifdef DEBUG
+                    char buffer[50];
+                    sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
+                    mvwprintw(getWindow(), 0, 0, buffer);
+                    wrefresh(getWindow());
+                    #endif //DEBUG
+                    if (c == cur->data->trigger) {
+                        //Call action handler
+                        (cur->data->pComponent->*(cur->data->action))();
+                    }
+                    cur = cur->pNext;
+                }
 
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ public:
     static CourseList* instance();
     virtual ~CourseList();
 
-    virtual void draw();
+    virtual bool handleKeyPress(int key);
 
     static void handleBackPressed();
     static void handleCoursePressed();
