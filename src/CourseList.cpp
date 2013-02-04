@@ -20,13 +20,13 @@ CourseList* CourseList::instance() {
 }
 
 CourseList::CourseList() : Panel("Course List") {
-    //Create back button
+    //Create back button    
     Button *pButton = new Button(this, "Back", CuTAES::DEF_W / 4, CuTAES::DEF_H/2);
     pButton->setEventHandler(handleBackPressed);
     this->add(pButton);
     //Create buttons for each course in CourseList.txt
     ifstream file;
-    file.open("CourseList.txt");
+    file.open((CuTAES::instance()->getDataDirectory() + "CourseList.txt").data());
     if (file.is_open()) {
         string line;
         int n = 0;
@@ -70,6 +70,7 @@ bool CourseList::handleKeyPress(int key) {
         show();
         return true;
     }
+    return false;
 }
 
 //Event handlers

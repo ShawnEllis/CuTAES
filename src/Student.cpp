@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "CuTAES.h"
+
 using namespace std;
 
 Student::Student(const string &first,
@@ -23,7 +25,7 @@ Student::Student(const string &first,
 }
 
 void Student::saveToFile() {
-    string filename = m_stuNum + ".txt";
+    string filename = CuTAES::instance()->getDataDirectory() + m_stuNum + ".txt";
     ofstream file;
     file.open(filename.data());
     if (file.is_open()) {

@@ -1,3 +1,6 @@
+#ifndef ACTION_TRIGGER_H
+#define ACTION_TRIGGER_H
+
 class Component;
 
 class ActionTrigger {
@@ -9,3 +12,5 @@ public:
     void(Component::*action)();
     int trigger;
 };
+
+#endif //ACTION_TRIGGER_H

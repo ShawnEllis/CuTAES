@@ -16,7 +16,7 @@ public:
     virtual ~Panel();
 
     virtual void show();
-    virtual void draw() {} //used by subclasses to draw special decorations
+    virtual void draw() {} //used by subclasses to draw special decorations TODO: Decide if still needed
 
     virtual void waitForInput();
 
@@ -34,7 +34,7 @@ public:
 
 protected:
     WINDOW *m_pWindow;
-    std::string title;
+    std::string m_title;
 
     List<Component*> m_componentList;
     ListNode<Component*> *pSelNode;

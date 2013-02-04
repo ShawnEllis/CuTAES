@@ -23,9 +23,9 @@ StudentInfoScreen::StudentInfoScreen() : Panel("") {
 	infoFields[5] = new_field(1, 2, 11, 14, 0, 0);
     set_field_type(infoFields[5], TYPE_INTEGER, 0);
     infoFields[6] = new_field(1, 4, 11, 24, 0, 0);
-    set_field_type(infoFields[6], TYPE_NUMERIC, 1, 1, 12);
+//    set_field_type(infoFields[6], TYPE_NUMERIC, 1, 1, 12);
 	infoFields[7] = new_field(1, 4, 11, 40, 0, 0);
-    set_field_type(infoFields[7], TYPE_NUMERIC, 1, 1, 12);
+//    set_field_type(infoFields[7], TYPE_NUMERIC, 1, 1, 12);
     infoFields[8] = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -97,7 +97,7 @@ void StudentInfoScreen::waitForInput() {
         } else if (ch == KEY_RIGHT) {
             form_driver(pForm, REQ_RIGHT_CHAR); //TODO: Stop right arrow working as spacebar
             wrefresh(m_pWindow);
-        } else if (ch == KEY_BACKSPACE) {
+        } else if (ch == KEY_BACKSPACE || ch == 127) {
             form_driver(pForm, REQ_DEL_PREV);
             wrefresh(m_pWindow);
         } else if (ch == CuTAES::KEY_ENT) {

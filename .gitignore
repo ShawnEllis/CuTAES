@@ -42,3 +42,13 @@ Thumbs.dba
 *.swp
 
 UML.pdf
+
+*.pbxproj
+
+*.xcworkspacedata
+
+*.xcuserstate
+
+*.xcscheme
+
+*.plist

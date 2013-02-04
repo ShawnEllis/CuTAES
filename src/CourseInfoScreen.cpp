@@ -1,13 +1,14 @@
 #include "CourseInfoScreen.h"
-#include "CuTAES.h"
-#include "WindowUtil.h"
 #include <string>
 #include <stdlib.h>
-#include "Student.h"
-#include "StringUtil.h"
 #include <iostream>
 #include <fstream>
 #include <time.h>
+
+#include "CuTAES.h"
+#include "Student.h"
+#include "StringUtil.h"
+#include "WindowUtil.h"
 
 using namespace std;
 
@@ -102,7 +103,7 @@ void CourseInfoScreen::waitForInput() {
             char buffer[50];
             sprintf(buffer, "application%ld.txt", time(NULL));
             ofstream file;
-            string filename = buffer;
+            string filename = CuTAES::instance()->getDataDirectory() + buffer;
             file.open(filename.data());
             if (file.is_open()) {
                 file << "Pending\n\n";

@@ -1,6 +1,5 @@
-
-#ifndef STUDENT_H_
-#define STUDENT_H_
+#ifndef STUDENT_H
+#define STUDENT_H
 
 #include <string>
 

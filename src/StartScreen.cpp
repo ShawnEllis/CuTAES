@@ -1,9 +1,12 @@
 #include "StartScreen.h"
+#include <stdlib.h>
+
 #include "CuTAES.h"
-#include "WindowUtil.h"
 #include "Button.h"
 #include "CourseList.h"
-#include <stdlib.h>
+#include "WindowUtil.h"
+
+#include "FormDialog.h"
 
 StartScreen* StartScreen::m_pInstance = 0;
 
@@ -28,11 +31,6 @@ StartScreen::StartScreen() : Panel("Start Screen") {
 StartScreen::~StartScreen() {
 }
 
-void StartScreen::draw() {
-    //Show the window
-    
-}
-
 //Event Handlers
 
 void StartScreen::handleExitPressed() {
@@ -40,5 +38,7 @@ void StartScreen::handleExitPressed() {
 }
 
 void StartScreen::handleCreatePressed() {
-    CourseList::instance()->show();
+//    CourseList::instance()->show();
+    FormDialog *pForm = new FormDialog("Form", 2);
+    pForm->show();
 }

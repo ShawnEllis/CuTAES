@@ -1,5 +1,5 @@
-#ifndef STARTSCREEN_H_
-#define STARTSCREEN_H_
+#ifndef STARTSCREEN_H
+#define STARTSCREEN_H
 
 #include <curses.h>
 #include "Panel.h"
@@ -8,8 +8,6 @@ class StartScreen : public Panel {
 public:
     static StartScreen* instance();
     virtual ~StartScreen();
-
-    virtual void draw();
 
     static void handleExitPressed();
     static void handleCreatePressed();

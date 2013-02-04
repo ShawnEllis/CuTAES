@@ -1,18 +1,26 @@
 #include "Panel.h"
-#include "Component.h"
+#include <stdio.h>
+
 #include "CuTAES.h"
+#include "Component.h"
 #include "ListNode.h"
 #include "ActionTrigger.h"
 #include "WindowUtil.h"
-#include <stdio.h>
+
+
+#ifdef DEBUG
+#include <iostream>
+#include <fstream>
+extern std::ofstream dout;
+#endif //DEBUG
 
 using namespace std;
 
-Panel::Panel(const string &t) : title(t) {
+Panel::Panel(const string &t) : m_title(t) {
     m_pWindow = newwin(CuTAES::DEF_H, CuTAES::DEF_W, 0, 0);
     m_componentList = *(new List<Component*>());
     m_actionTriggerList = *(new List<ActionTrigger*>());
-    wprintw(m_pWindow, title.data());
+    wprintw(m_pWindow, m_title.data());
     wrefresh(m_pWindow);
 }
 
@@ -21,10 +29,13 @@ Panel::~Panel() {
 }
 
 void Panel::show() {
+#ifdef DEBUG
+    dout << "Show panel " << m_title << endl;
+#endif //DEBUG
     wclear(m_pWindow);
     //Decorate the window
     box(m_pWindow, 0 , 0);
-    mvwprintw(m_pWindow, 1, (CuTAES::DEF_W - title.length()) / 2, title.data());
+    mvwprintw(m_pWindow, 1, (CuTAES::DEF_W - m_title.length()) / 2, m_title.data());
     WindowUtil::drawHLine(m_pWindow, 1, 2, CuTAES::DEF_W - 2);
     ListNode<Component*>* cur = m_componentList.first();
     while (cur != 0) {

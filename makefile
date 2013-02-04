@@ -16,10 +16,10 @@ $(shell [ -d "bin" ] || mkdir -p bin)
 $(shell [ -d "obj" ] || mkdir -p obj)
 
 $(OUT): $(OBJ)
-	g++ $^ $(LIB) -o$@
+	g++ $^ $(LIB) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/*.h
-	g++ $(CFLAGS) -c $< -o$@
+	g++ $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OUT) $(OBJDIR)/*.o
