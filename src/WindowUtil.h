@@ -12,11 +12,16 @@ class WindowUtil {
 public:
 	static void createTitledWindow(WINDOW **pWindow, const std::string &title);
 
-    static void drawHLine(WINDOW *pWindow, int x, int y, int l, char c='_');
-    static void drawVLine(WINDOW *pWindow, int x, int y, int l, char c='|');
+    static void drawHLine(WINDOW *pWindow, int x, int y, int l, int ch=ACS_HLINE);
+    static void drawVLine(WINDOW *pWindow, int x, int y, int l, int ch=ACS_VLINE);
 
-    static void drawRect(WINDOW *pWindow, int x, int y, int w, int h);
-    static void fillRect(WINDOW *pWindow, int x, int y, int w, int h, char c='\'');
+    static void drawRect(WINDOW *pWindow, int x, int y, int w, int h,
+                         int tl=ACS_ULCORNER, int tr=ACS_URCORNER,
+                         int bl=ACS_LLCORNER, int br=ACS_LRCORNER,
+                         int t=ACS_HLINE,     int b=ACS_HLINE,
+                         int l=ACS_VLINE,     int r=ACS_VLINE);
+    
+    static void fillRect(WINDOW *pWindow, int x, int y, int w, int h, int ch=ACS_CKBOARD);
 };
 
 #endif //WINDOW_UTIL_H

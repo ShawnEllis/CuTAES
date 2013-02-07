@@ -1,12 +1,15 @@
 #include "CourseList.h"
-#include "CuTAES.h"
-#include "WindowUtil.h"
-#include "Button.h"
-#include "StartScreen.h"
-#include "StudentInfoScreen.h"
-#include "CourseInfoScreen.h"
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
+
+#include "Button.h"
+#include "StartScreen.h"
+#include "FormDialog.h"
+#include "StudentInfoScreen.h"
+#include "CourseInfoScreen.h"
+#include "WindowUtil.h"
+#include "Student.h"
 
 using namespace std;
 
@@ -80,13 +83,40 @@ void CourseList::handleBackPressed() {
 }
 
 void CourseList::handleCoursePressed() {
-    StudentInfoScreen *infoScr = new StudentInfoScreen();
-    infoScr->show();
-    if (infoScr->isInputAccepted()) {
-        CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
-        courseInfoScr->show();
-        delete courseInfoScr;
+    //Create and show student info dialog
+    FormDialog *pForm = new FormDialog("Enter Student Info", 8);
+    pForm->addField("First Name:   ", 1, 32, FIELDTYPE_ALPHA);
+    pForm->addField("Last Name:    ", 1, 32, FIELDTYPE_ALPHA);
+    pForm->addField("Student ID:   ", 1, 32, FIELDTYPE_INT);
+    pForm->addField("Email:        ", 1, 32);
+    pForm->addField("Major:        ", 1, 32);
+    pForm->addField("Year Standing:", 1, 2, FIELDTYPE_INT);
+//    int range[] = {1, 1, 12}; TODO: Investigate why float validation is broken on OS X
+    pForm->addField("CGPA:", 1, 4, 20, 10, FIELDTYPE_FLOAT/*, range, 3*/);
+    pForm->addField("Major GPA:", 1, 4, 32, 10, FIELDTYPE_FLOAT/*, range, 3*/);
+    pForm->show();
+    //Get result
+    bool formAccepted;
+    string *data;
+    pForm->getFormData(&formAccepted, &data);
+    delete pForm;
+    if (formAccepted) {
+        //Save student
+        Student *stu = new Student(data[0], data[1], data[2], data[3], data[4],
+                                   atoi(data[5].data()), atof(data[6].data()), atof(data[7].data()));
+        stu->saveToFile();
+        delete stu;
+
+        //Create and show course info dialog
+        pForm = new FormDialog("Enter Course Info", 8);
+        pForm->addField("Relevant Work Experience:|Include responsibilities, duration, start and end dates.", 4, 32, 11, 0);
+        pForm->addList("List test", 10, 10, 0, 0);
+        pForm->show();
+        
+//        CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
+//        courseInfoScr->show();
+//        delete courseInfoScr;
     }
-    delete infoScr;
+    //TODO: Store student data and application data in some global queue
     CourseList::instance()->show();
 }

@@ -1,6 +1,8 @@
 #ifndef CUTAES_H
 #define CUTAES_H
 
+#define DEBUG
+
 #include <string>
 
 /*

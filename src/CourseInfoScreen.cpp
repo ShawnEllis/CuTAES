@@ -5,7 +5,6 @@
 #include <fstream>
 #include <time.h>
 
-#include "CuTAES.h"
 #include "Student.h"
 #include "StringUtil.h"
 #include "WindowUtil.h"

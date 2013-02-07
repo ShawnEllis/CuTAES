@@ -4,6 +4,7 @@
 #include <curses.h>
 #include "List.h"
 #include <string>
+#include "CuTAES.h"
 
 template <class T>
 class ListNode;
@@ -12,11 +13,10 @@ class ActionTrigger;
 
 class Panel {
 public:
-    Panel(const std::string &t);
+    Panel(const std::string &t, int w=CuTAES::DEF_W, int h=CuTAES::DEF_H);
     virtual ~Panel();
 
     virtual void show();
-    virtual void draw() {} //used by subclasses to draw special decorations TODO: Decide if still needed
 
     virtual void waitForInput();
 
@@ -35,12 +35,16 @@ public:
 protected:
     WINDOW *m_pWindow;
     std::string m_title;
-
-    List<Component*> m_componentList;
-    ListNode<Component*> *pSelNode;
+    
+    List<Component*> m_componentList; //TODO: Make private
+    ListNode<Component*> *pSelNode; //TODO: Clean up menu navigation
     Component* pSelComponent;
-
+    
+    virtual void drawComponents();
+    
+private:    
     List<ActionTrigger*> m_actionTriggerList;
+    
 };
 
 #endif //PANEL_H

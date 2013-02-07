@@ -4,6 +4,10 @@
 
 #include "CuTAES.h"
 
+#ifdef DEBUG
+extern std::ofstream dout;
+#endif //DEBUG
+
 using namespace std;
 
 Student::Student(const string &first,
@@ -25,9 +29,12 @@ Student::Student(const string &first,
 }
 
 void Student::saveToFile() {
-    string filename = CuTAES::instance()->getDataDirectory() + m_stuNum + ".txt";
+    string filename = CuTAES::instance()->getDataDirectory() + "student/" + m_stuNum + ".txt";
     ofstream file;
     file.open(filename.data());
+#ifdef DEBUG
+    dout << "Student: Saving to " << filename << std::endl;
+#endif //DEBUG
     if (file.is_open()) {
         file << m_firstName << "\n";
         file << m_lastName << "\n";
@@ -39,4 +46,7 @@ void Student::saveToFile() {
         file << m_majorGPA << "\n";
         file.close();
     }
+#ifdef DEBUG
+    dout << "Student: Saved." << std::endl;
+#endif //DEBUG
 }

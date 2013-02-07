@@ -1,3 +1,13 @@
+/*
+ * A highly configurable dialog which prompts the user for various data.
+ * 
+ * To use, create a new instance with the number of fields you will add.
+ * Then, individually add each field.
+ * 
+ * Once the form is set up, call show() to get an array of data
+ * corresponding to the fields you added, in order of addition.
+ */
+
 #ifndef FORMDIALOG_H
 #define FORMDIALOG_H
 
@@ -5,25 +15,40 @@
 #include <string>
 #include <curses.h>
 #include <form.h>
+#include "StringUtil.h"
 
 class FormDialog : Panel {
 public:
     FormDialog(const std::string &title, int numFields);
     virtual ~FormDialog();
-    
-    void addField(const std::string &label, int rows, int cols, int x, int y, int type);
-    
+
     void show();
     void waitForInput();
     
+    void getFormData(bool *pAccepted, std::string **pData);
+    
+    void addField(const std::string &label, int rows, int cols, int type=0, int *typeParams=0, int nParams=0);
+    void addField(const std::string &label, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0);
+    
+    void addList(const std::string& label, int width, int height, int x, int y);
+    
 private:
-    int m_numFields;
+    int m_numFields, m_curField; //Total and current number of fields
     int m_rows, m_cols;
     
-    std::string *m_pLabels;
+    bool m_formAccepted;
+    
     FIELD **m_pFields;
     FORM *m_pForm;
-    WINDOW *m_pWindow;
+    
+    bool isDataValid();
+};
+
+enum {
+    FIELDTYPE_NONE = 0,
+    FIELDTYPE_ALPHA,
+    FIELDTYPE_INT,
+    FIELDTYPE_FLOAT
 };
 
 
