@@ -13,13 +13,15 @@ extern std::ofstream dout;
 ListBox::ListBox(Panel *pPanel, int x, int y, int w, int h) : Component(pPanel, x, y, w, h) {
     setSelectable(true);
     m_numRows = 1;
+    m_pForm = 0;
     
     //Create field array, init to null
     m_pFields = new FIELD*[2];
     createField(&m_pFields[0], 0, "...");
+    set_field_userptr(m_pFields[0], (void*)true);
     m_pFields[1] = 0;
     
-    m_pForm = new_form(m_pFields);
+    createForm();
 }
 
 ListBox::~ListBox() {
@@ -30,7 +32,6 @@ ListBox::~ListBox() {
             free_field(m_pFields[i]);
         }
     }
-    refresh();
 }
 
 void ListBox::draw() {
@@ -38,23 +39,48 @@ void ListBox::draw() {
     dout << "ListBox:draw()" << std::endl;
 #endif //DEBUG
     if (isSelected()) {
-        WindowUtil::fillRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight(), ' ');
+ //       WindowUtil::fillRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight(), ' ');
     }
     WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight());
-    int rows, cols;
-    scale_form(m_pForm, &rows, &cols);
-    set_form_win(m_pForm, m_pPanel->getWindow());
-    set_form_sub(m_pForm, derwin(m_pPanel->getWindow(), getHeight() - 2, getWidth() - 2, getY() + 1, getX() + 1));
-    post_form(m_pForm);
+//    unpost_form(m_pForm); //Force form to redraw
+//    post_form(m_pForm);
+}
+
+bool ListBox::handleKeyPress(int key) {
+    if (key == KEY_UP) {
+        //Move up a field
+        selectField(REQ_PREV_FIELD);
+        return true;
+    } else if (key == KEY_DOWN || key == 9) { //Tab key
+        //Move down a field
+        selectField(REQ_NEXT_FIELD);
+        return true;
+    } else if (key == KEY_BACKSPACE || key == 127) {
+        //Delete prev. char
+        form_driver(m_pForm, REQ_DEL_PREV);
+        return true;
+    } else if (key == 330) { //Delete key TODO: Fix this
+        //Delete next char
+        form_driver(m_pForm, REQ_DEL_PREV);
+        return true;
+    } else {
+        FIELD *pField = current_field(m_pForm);
+        if (field_userptr(pField) != 0) {
+#ifdef DEBUG
+            dout << "Create new row" << std::endl;
+#endif
+            addRow("New Row");
+            if (key == CuTAES::KEY_ENT) {
+                //Clear field
+                set_field_buffer(pField, 0, "");
+                return true;
+            }
+        }
+        //Send key to form driver
+        form_driver(m_pForm, key);
+    }
     wrefresh(m_pPanel->getWindow());
-}
-
-void ListBox::registerActionTriggers() {
-    m_pPanel->registerAction(CuTAES::KEY_ENT, this, &Component::doAction);
-}
-
-void ListBox::doAction() {
-
+    return false;
 }
 
 /*
@@ -74,12 +100,15 @@ void ListBox::addRow(const std::string& str) {
     
     //Create '...' row
     createField(&pNewFields[m_numRows], m_numRows, "...");
+    set_field_userptr(pNewFields[m_numRows], (void*)true);
     
     //Create null field
     pNewFields[m_numRows + 1] = 0;
     m_numRows++;
     
     m_pFields = pNewFields;
+    
+    createForm();
 }
 
 /*
@@ -91,4 +120,35 @@ void ListBox::createField(FIELD **pField, int y, std::string str) {
     set_field_buffer(*pField, 0, str.data());
     set_field_back(*pField, A_UNDERLINE);
     field_opts_off(*pField, O_AUTOSKIP);
+    field_opts_on(*pField, O_BLANK);
+}
+
+void ListBox::selectField(int fieldReq) {
+    //Unhighlight cur field
+    set_field_back(current_field(m_pForm), A_UNDERLINE);
+    form_driver(m_pForm, fieldReq);
+    form_driver(m_pForm, REQ_BEG_LINE);
+    set_field_back(current_field(m_pForm), A_STANDOUT);
+}
+
+void ListBox::createForm() {
+    if (m_pForm != 0) {
+        unpost_form(m_pForm);
+        free_form(m_pForm);
+    }
+    m_pForm = new_form(m_pFields);
+    int rows, cols;
+    scale_form(m_pForm, &rows, &cols);
+    set_form_win(m_pForm, m_pPanel->getWindow());
+    set_form_sub(m_pForm, derwin(m_pPanel->getWindow(), getHeight() - 2, getWidth() - 2, getY() + 1, getX() + 1));
+
+    post_form(m_pForm);
+    
+    form_driver(m_pForm, REQ_LAST_FIELD);
+    selectField(REQ_PREV_FIELD);
+}
+
+void ListBox::setSelected(bool sel) {
+    Component::setSelected(sel);
+    selectField(REQ_FIRST_FIELD);
 }

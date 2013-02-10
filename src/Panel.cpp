@@ -16,9 +16,10 @@ extern std::ofstream dout;
 using namespace std;
 
 Panel::Panel(const string &t, int w, int h) : m_title(t) {
+    pSelComponent = 0;
+    pSelNode = 0;
     m_pWindow = newwin(h, w, 0, 0);
     m_componentList = *(new List<Component*>());
-    m_actionTriggerList = *(new List<ActionTrigger*>());
     wrefresh(m_pWindow);
 }
 
@@ -31,7 +32,12 @@ void Panel::show() {
     dout << "Show panel " << m_title << endl;
 #endif //DEBUG
     
-    wclear(m_pWindow);
+    m_visible = true;
+    draw();
+    waitForInput();
+}
+
+void Panel::draw() {
     
     //Decorate the window
     box(m_pWindow, 0 , 0);
@@ -41,7 +47,6 @@ void Panel::show() {
     drawComponents();
     
     wrefresh(m_pWindow);
-    waitForInput();
 }
 
 /*
@@ -56,10 +61,18 @@ void Panel::drawComponents() {
 }
 
 void Panel::waitForInput() {
-    while (true) {
-        int c = getch();
-        if (!handleKeyPress(c)) { //Event is not consumed
-            if (c == KEY_UP) {
+    while (m_visible) {
+//        draw();
+        wrefresh(m_pWindow);
+        int ch = getch();
+        if (pSelComponent != 0 && pSelComponent->handleKeyPress(ch)) {
+            continue;
+        }
+        if (handleKeyPress(ch)) {
+            continue;
+        }
+        if (m_componentList.getSize() > 1) {
+            if (ch == KEY_UP) {
                 //Select prev item
                 pSelComponent->setSelected(false);
                 if (pSelNode->pPrev != 0) {
@@ -69,8 +82,8 @@ void Panel::waitForInput() {
                 }
                 pSelComponent = pSelNode->data;
                 pSelComponent->setSelected(true);
-                show();
-            } else if (c == KEY_DOWN) {
+                draw();
+            } else if (ch == KEY_DOWN) {
                 //Select next item
                 pSelComponent->setSelected(false);
                 if (pSelNode->pNext != 0) {
@@ -80,24 +93,7 @@ void Panel::waitForInput() {
                 }
                 pSelComponent = pSelNode->data;
                 pSelComponent->setSelected(true);
-                show();
-            } else {
-                //Iterate through action triggers
-                ListNode<ActionTrigger*>* cur = m_actionTriggerList.first();
-                while (cur != 0) {
-                    #ifdef DEBUG
-                    char buffer[50];
-                    sprintf(buffer, "%d %d %d", cur->data->trigger, c, KEY_ENTER);
-                    mvwprintw(getWindow(), 0, 0, buffer);
-                    wrefresh(getWindow());
-                    #endif //DEBUG
-                    if (c == cur->data->trigger) {
-                        //Call action handler
-                        (cur->data->pComponent->*(cur->data->action))();
-                    }
-                    cur = cur->pNext;
-                }
-
+                draw();
             }
         }
     }
@@ -105,15 +101,10 @@ void Panel::waitForInput() {
 
 void Panel::add(Component *c) {
     m_componentList.addBack(c);
-    c->registerActionTriggers();
     if (pSelComponent == 0 && c->isSelectable()) {
         pSelNode = m_componentList.last();
         pSelComponent = c;
         pSelComponent->setSelected(true);
     }
-}
-
-void Panel::registerAction(int t, Component *c, void(Component::*a)()) {
-    m_actionTriggerList.addBack(new ActionTrigger(t, c, a));
 }
 

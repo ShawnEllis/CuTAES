@@ -22,19 +22,10 @@ public:
     virtual void draw() = 0;
 
     /*
-     * Registers event triggers on m_pPanel.
-     * Useful for components with actions;
-     *   eg. button uses enter as trigger for doing an action
-     * This is called by m_pPanel on add().
-     * TODO: Make this associate component & panel
+     * Handle a key event.
+     * Return true to consume the event.
      */
-    virtual void registerActionTriggers() = 0;
-
-    /*
-     * Preform component action.
-     * TODO: Make generic
-     */
-    virtual void doAction() {}
+    virtual bool handleKeyPress(int ch) {return false;}
 
     //Getters & Setters
     

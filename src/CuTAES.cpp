@@ -11,6 +11,7 @@ std::ofstream dout;
 #endif //DEBUG
 
 #include "FormDialog.h"
+#include "CourseInfoScreen.h"
 
 const int CuTAES::DEF_W = 80; //Default width of menus
 const int CuTAES::DEF_H = 24; //Default height of menus
@@ -35,7 +36,6 @@ CuTAES::CuTAES() {
     atexit(onExit); //Set onExit() to be called on exit
     
     initscr(); //Intialize ncurses
-//    setlocale(LC_ALL, "");
     keypad(stdscr, TRUE); //Enable arrow keys
     cbreak(); //Disable line buffering
     noecho();
@@ -64,10 +64,8 @@ int main(int argc, const char* argv[]) {
         CuTAES::instance()->setWorkingDirectory(argv[1]); //Init working directory
     }
 //    StartScreen::instance()->show();
-    //Create and show course info dialog
-    FormDialog *pForm = new FormDialog("Enter Course Info", 8);
-    pForm->addField("Relevant Work Experience:|Include responsibilities, duration, start and end dates.", 4, 32, 11, 0);
-    pForm->addList("List test", 10, 10, 0, 0);
-    pForm->show();
+    
+    CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
+    courseInfoScr->show();
     return 0;
 }

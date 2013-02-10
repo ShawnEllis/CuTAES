@@ -17,7 +17,9 @@ public:
     virtual ~Panel();
 
     virtual void show();
+    virtual void hide() {m_visible = false;}
 
+    virtual void draw();
     virtual void waitForInput();
 
     /*
@@ -27,8 +29,6 @@ public:
     virtual bool handleKeyPress(int key) {return false;} 
 
     void add(Component *c);
-
-    void registerAction(int t, Component *c, void(Component::*a)());
 
     WINDOW* getWindow() {return m_pWindow;}
 
@@ -42,8 +42,8 @@ protected:
     
     virtual void drawComponents();
     
-private:    
-    List<ActionTrigger*> m_actionTriggerList;
+private:
+    bool m_visible;
     
 };
 

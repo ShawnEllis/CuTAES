@@ -17,18 +17,20 @@
 #include <form.h>
 #include "StringUtil.h"
 
-class FormDialog : Panel {
+class FormDialog : public Panel {
 public:
     FormDialog(const std::string &title, int numFields);
     virtual ~FormDialog();
-
-    void show();
-    void waitForInput();
+    
+    virtual void show();
+    virtual void draw();
+    
+    virtual bool handleKeyPress(int key);
     
     void getFormData(bool *pAccepted, std::string **pData);
     
     void addField(const std::string &label, int rows, int cols, int type=0, int *typeParams=0, int nParams=0);
-    void addField(const std::string &label, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0);
+    void addField(const std::string &label, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0, FIELD** pField=0);
     
     void addList(const std::string& label, int width, int height, int x, int y);
     

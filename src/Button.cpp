@@ -24,12 +24,12 @@ void Button::draw() {
     mvwprintw(m_pPanel->getWindow(), getY() + BORDER_SIZE_Y, getX() + BORDER_SIZE_X, text.data());
 }
 
-void Button::registerActionTriggers() {
-    m_pPanel->registerAction(CuTAES::KEY_ENT, this, &Component::doAction);
-}
-
-void Button::doAction() {
-    if (isSelected() && eventHandler != 0) {
-        eventHandler();
+bool Button::handleKeyPress(int ch) {
+    if (ch == CuTAES::KEY_ENT) {
+        if (eventHandler != 0) {
+            eventHandler();
+            return true;
+        }
     }
+    return false;
 }

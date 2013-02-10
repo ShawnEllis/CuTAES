@@ -26,16 +26,17 @@ FormDialog::FormDialog(const std::string &title, int numFields) : Panel(title), 
 
 FormDialog::~FormDialog() {
     unpost_form(m_pForm);
-    free_form(m_pForm);
+//    free_form(m_pForm); TODO: Fix segfault
     for (int i = 0; i < m_numFields; i++) {
         if (m_pFields[i] != 0) {
             free_field(m_pFields[i]);
         }
     }
+    curs_set(0);
     refresh();
 }
 
-void FormDialog::show() {
+void FormDialog::show() {    
     if (!m_pFields[0]) {
         return;
     }
@@ -54,13 +55,24 @@ void FormDialog::show() {
     scale_form(m_pForm, &rows, &cols);
     m_rows = std::max(m_rows, rows);
     m_cols = std::max(m_cols, cols);
+    delwin(m_pWindow);
     m_pWindow = newwin(m_rows + 6, m_cols + 4, 4, CuTAES::DEF_W / 2 - (m_cols + 4) / 2);
     
     set_form_win(m_pForm, m_pWindow);
     set_form_sub(m_pForm, derwin(m_pWindow, m_rows, m_cols, 2, 2));
     
-    box(m_pWindow, 0, 0);
     post_form(m_pForm);
+    
+    form_driver(m_pForm, REQ_FIRST_FIELD);
+    form_driver(m_pForm, REQ_END_LINE);
+    
+    curs_set(1);
+    Panel::show();
+    curs_set(0);
+}
+
+void FormDialog::draw() {
+    box(m_pWindow, 0, 0);
     
     //Draw title
     mvwprintw(m_pWindow, 1, 1, m_title.data());
@@ -72,62 +84,54 @@ void FormDialog::show() {
     
     mvwprintw(m_pWindow, m_rows + 4, 1, "`/~: Cancel");
 	mvwprintw(m_pWindow, m_rows + 4, m_cols - 10, "ENTER: Accept");
-    
-    form_driver(m_pForm, REQ_END_LINE);
-    
-    curs_set(1);
+ 
     wrefresh(m_pWindow);
-    waitForInput();
-    curs_set(0);
 }
 
 /*
  * Overrides Panel's waitForInput().
  */
-void FormDialog::waitForInput() {
-    int key;
-    while ((key = getch()) != 96) { //Control key cancels
-        if (key == KEY_UP) {
-            //Move up a field
-            form_driver(m_pForm, REQ_PREV_FIELD);
-            form_driver(m_pForm, REQ_END_LINE);
-            wrefresh(m_pWindow);
-        } else if (key == KEY_DOWN || key == 9) { //Tab key
-            //Move down a field
-            form_driver(m_pForm, REQ_NEXT_FIELD);
-            form_driver(m_pForm, REQ_END_LINE);
-            wrefresh(m_pWindow);
-        } else if (key == KEY_LEFT) {
-            //Move left in field
-            form_driver(m_pForm, REQ_LEFT_CHAR);
-            wrefresh(m_pWindow);
-        } else if (key == KEY_RIGHT) {
-            //TODO: Stop right arrow working as spacebar
-            //Move right in field
-            form_driver(m_pForm, REQ_RIGHT_CHAR);
-            wrefresh(m_pWindow);
-        } else if (key == KEY_BACKSPACE || key == 127) {
-            //Delete prev. char
-            form_driver(m_pForm, REQ_DEL_PREV);
-            wrefresh(m_pWindow);
-        } else if (key == 330) { //Delete key TODO: Fix this
-            //Delete next char
-            form_driver(m_pForm, REQ_DEL_PREV);
-            wrefresh(m_pWindow);
-        } else if (key == CuTAES::KEY_ENT) {
-            //TODO: Accept form, if data in fields are valid
-            form_driver(m_pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
-            if (isDataValid()) {
-                m_formAccepted = true;
-                return;
-            }
-            form_driver(m_pForm, REQ_PREV_FIELD); //Stay on current line
-        } else {
-            //Send key to form driver
-            form_driver(m_pForm, key);
-            wrefresh(m_pWindow);
+bool FormDialog::handleKeyPress(int key) {
+#ifdef DEBUG
+    dout << key << std::endl;
+#endif
+    if (key == KEY_UP) {
+        //Move up a field
+        form_driver(m_pForm, REQ_PREV_FIELD);
+        form_driver(m_pForm, REQ_END_LINE);
+    } else if (key == KEY_DOWN || key == 9) { //Tab key
+        //Move down a field
+        form_driver(m_pForm, REQ_NEXT_FIELD);
+        form_driver(m_pForm, REQ_END_LINE);
+    } else if (key == KEY_LEFT) {
+        //Move left in field
+        form_driver(m_pForm, REQ_LEFT_CHAR);
+    } else if (key == KEY_RIGHT) {
+        //TODO: Stop right arrow working as spacebar
+        //Move right in field
+        form_driver(m_pForm, REQ_RIGHT_CHAR);
+    } else if (key == KEY_BACKSPACE || key == 127) {
+        //Delete prev. char
+        form_driver(m_pForm, REQ_DEL_PREV);
+    } else if (key == 330) { //Delete key TODO: Fix this
+        //Delete next char
+        form_driver(m_pForm, REQ_DEL_PREV);
+    } else if (key == CuTAES::KEY_ENT) {
+        //TODO: Accept form, if data in fields are valid
+        form_driver(m_pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
+        if (isDataValid()) {
+            m_formAccepted = true;
+            hide();
+            return true;
         }
+        form_driver(m_pForm, REQ_PREV_FIELD); //Stay on current line
+    } else if (key == 96) { //Ctrl cancels
+        hide();
+    } else {
+        //Send key to form driver
+        form_driver(m_pForm, key);
     }
+    return true;
 }
 
 bool FormDialog::isDataValid() {
@@ -167,7 +171,7 @@ void FormDialog::addField(const std::string &label, int rows, int cols, int type
  * Automatically creates a label component.
  * Include | in your label to designate a field's initial content.
  */
-void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int y, int type, int *typeParams, int nParams) {    
+void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {    
     //Split the label and field contents.
     int i;
     std::string contents, label;
@@ -227,6 +231,11 @@ void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int
     Label* pLabel = new Label(this, label, x + 1, y + 3);
     add(pLabel);
     
+    //Return pointer
+    if (pField != 0) {
+        *pField = m_pFields[m_curField];
+    }
+    
     m_curField++;
 }
 
@@ -236,6 +245,12 @@ void FormDialog::addList(const std::string &label, int width, int height, int x,
     add(pList);
     m_rows = std::max(m_rows, height + y);
     m_cols = std::max(m_cols, width + x);
+    
+    //Create dummy field for selection
+    FIELD *pField;
+    addField("", 1, 1, x, y, 0, 0, 0, &pField);
+//    set_field_userptr(pField, (void*)(pList));
+    //TODO: Set user pointer to listBox. This will be used for navigation.
     
     //Create the label
     Label* pLabel = new Label(this, label, x + 1, y + 3);

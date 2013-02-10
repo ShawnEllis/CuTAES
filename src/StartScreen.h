@@ -17,5 +17,5 @@ private:
     static StartScreen* m_pInstance;
 };
 
-#endif //STARTSCREEN_H_
+#endif //STARTSCREEN_H
 

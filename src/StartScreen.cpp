@@ -31,7 +31,7 @@ StartScreen::~StartScreen() {
 //Event Handlers
 
 void StartScreen::handleExitPressed() {
-    exit(0);
+    StartScreen::instance()->hide();
 }
 
 void StartScreen::handleCreatePressed() {

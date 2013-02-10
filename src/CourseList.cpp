@@ -6,7 +6,6 @@
 #include "Button.h"
 #include "StartScreen.h"
 #include "FormDialog.h"
-#include "StudentInfoScreen.h"
 #include "CourseInfoScreen.h"
 #include "WindowUtil.h"
 #include "Student.h"
@@ -58,7 +57,7 @@ bool CourseList::handleKeyPress(int key) {
         pSelNode = m_componentList.first();
         pSelComponent = pSelNode->data;
         pSelComponent->setSelected(true);
-        show();
+        draw();
         return true;
     } else if (key == KEY_RIGHT) {
         //Select next item
@@ -70,7 +69,7 @@ bool CourseList::handleKeyPress(int key) {
         }
         pSelComponent = pSelNode->data;
         pSelComponent->setSelected(true);
-        show();
+        draw();
         return true;
     }
     return false;
@@ -79,7 +78,8 @@ bool CourseList::handleKeyPress(int key) {
 //Event handlers
 
 void CourseList::handleBackPressed() {
-    StartScreen::instance()->show();
+    CourseList::instance()->hide();
+//    StartScreen::instance()->show();
 }
 
 void CourseList::handleCoursePressed() {
@@ -108,15 +108,16 @@ void CourseList::handleCoursePressed() {
         delete stu;
 
         //Create and show course info dialog
-        pForm = new FormDialog("Enter Course Info", 8);
-        pForm->addField("Relevant Work Experience:|Include responsibilities, duration, start and end dates.", 4, 32, 11, 0);
-        pForm->addList("List test", 10, 10, 0, 0);
-        pForm->show();
+//        pForm = new FormDialog("Enter Course Info", 8);
+//        pForm->addField("Relevant Work Experience:|Include responsibilities, duration, start and end dates.", 4, 32, 11, 0);
+//        pForm->addList("List test", 10, 10, 0, 0);
+//        pForm->show();
         
-//        CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
-//        courseInfoScr->show();
-//        delete courseInfoScr;
+        CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
+        courseInfoScr->show();
+        delete courseInfoScr;
     }
     //TODO: Store student data and application data in some global queue
+    
     CourseList::instance()->show();
 }

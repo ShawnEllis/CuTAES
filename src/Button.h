@@ -14,9 +14,7 @@ public:
 
     virtual void draw();
 
-    virtual void registerActionTriggers();
-
-    virtual void doAction();
+    virtual bool handleKeyPress(int ch);
 
     void setEventHandler(void(*handler)()) {eventHandler = handler;}
 

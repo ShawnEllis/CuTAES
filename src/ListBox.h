@@ -19,9 +19,9 @@ public:
     
     virtual void draw();
     
-    virtual void registerActionTriggers();
+    virtual bool handleKeyPress(int ch);
     
-    virtual void doAction();
+    void setSelected(bool sel);
     
 protected:
     void addRow(const std::string& str="New Row");
@@ -32,6 +32,9 @@ private:
     FIELD **m_pFields;
     
     void createField(FIELD **pField, int y, std::string str);
+    void selectField(int fieldReq);
+    
+    void createForm();
     
 };
 

@@ -19,6 +19,7 @@ public:
         if (pLast == 0) {
             pLast = node;
         }
+        m_size++;
     }
 
     void addBack(T data) {
@@ -31,6 +32,7 @@ public:
         if (pFirst == 0) {
             pFirst = node;
         }
+        m_size++;
     }
 
     ListNode<T>* first() {
