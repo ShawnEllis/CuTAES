@@ -38,12 +38,7 @@ void ListBox::draw() {
 #ifdef DEBUG
     dout << "ListBox:draw()" << std::endl;
 #endif //DEBUG
-    if (isSelected()) {
- //       WindowUtil::fillRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight(), ' ');
-    }
     WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight());
-//    unpost_form(m_pForm); //Force form to redraw
-//    post_form(m_pForm);
 }
 
 bool ListBox::handleKeyPress(int key) {
@@ -69,7 +64,7 @@ bool ListBox::handleKeyPress(int key) {
 #ifdef DEBUG
             dout << "Create new row" << std::endl;
 #endif
-            addRow("New Row");
+            addRow("");
             if (key == CuTAES::KEY_ENT) {
                 //Clear field
                 set_field_buffer(pField, 0, "");
@@ -88,7 +83,7 @@ bool ListBox::handleKeyPress(int key) {
     Must copy data to new array due to limitations in the forms library.
  */
 void ListBox::addRow(const std::string& str) {
-    FIELD **pNewFields = new FIELD*[m_numRows + 2]; //3
+    FIELD **pNewFields = new FIELD*[m_numRows + 2];
     
     //Copy existing fields, up to the second last ('...') row
     for (int i = 0; i < m_numRows - 1; i++) {
@@ -118,14 +113,14 @@ void ListBox::addRow(const std::string& str) {
 void ListBox::createField(FIELD **pField, int y, std::string str) {
     *pField = new_field(1, getWidth() - 2, y, 0, 0, 0);
     set_field_buffer(*pField, 0, str.data());
-    set_field_back(*pField, A_UNDERLINE);
+    set_field_back(*pField, A_NORMAL);
     field_opts_off(*pField, O_AUTOSKIP);
     field_opts_on(*pField, O_BLANK);
 }
 
 void ListBox::selectField(int fieldReq) {
     //Unhighlight cur field
-    set_field_back(current_field(m_pForm), A_UNDERLINE);
+    set_field_back(current_field(m_pForm), A_NORMAL);
     form_driver(m_pForm, fieldReq);
     form_driver(m_pForm, REQ_BEG_LINE);
     set_field_back(current_field(m_pForm), A_STANDOUT);
@@ -145,10 +140,18 @@ void ListBox::createForm() {
     post_form(m_pForm);
     
     form_driver(m_pForm, REQ_LAST_FIELD);
-    selectField(REQ_PREV_FIELD);
+    if (isSelected()) {
+        selectField(REQ_PREV_FIELD);
+    }
 }
 
 void ListBox::setSelected(bool sel) {
     Component::setSelected(sel);
-    selectField(REQ_FIRST_FIELD);
+    if (sel) {
+        selectField(REQ_FIRST_FIELD);
+    } else {
+        set_field_back(current_field(m_pForm), A_NORMAL);
+        form_driver(m_pForm, REQ_BEG_LINE);
+    }
+    wrefresh(m_pPanel->getWindow());
 }

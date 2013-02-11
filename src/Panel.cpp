@@ -15,10 +15,10 @@ extern std::ofstream dout;
 
 using namespace std;
 
-Panel::Panel(const string &t, int w, int h) : m_title(t) {
+Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h) {
     pSelComponent = 0;
     pSelNode = 0;
-    m_pWindow = newwin(h, w, 0, 0);
+    m_pWindow = newwin(h, w, 0, (CuTAES::DEF_W - w) / 2);
     m_componentList = *(new List<Component*>());
     wrefresh(m_pWindow);
 }
@@ -41,8 +41,8 @@ void Panel::draw() {
     
     //Decorate the window
     box(m_pWindow, 0 , 0);
-    mvwprintw(m_pWindow, 1, (CuTAES::DEF_W - m_title.length()) / 2, m_title.data());
-    WindowUtil::drawHLine(m_pWindow, 1, 2, CuTAES::DEF_W - 2);
+    mvwprintw(m_pWindow, 1, (m_width - m_title.length()) / 2, m_title.data());
+    WindowUtil::drawHLine(m_pWindow, 1, 2, m_width - 2);
     
     drawComponents();
     
@@ -62,7 +62,6 @@ void Panel::drawComponents() {
 
 void Panel::waitForInput() {
     while (m_visible) {
-//        draw();
         wrefresh(m_pWindow);
         int ch = getch();
         if (pSelComponent != 0 && pSelComponent->handleKeyPress(ch)) {
@@ -71,7 +70,7 @@ void Panel::waitForInput() {
         if (handleKeyPress(ch)) {
             continue;
         }
-        if (m_componentList.getSize() > 1) {
+        if (pSelComponent != 0) {
             if (ch == KEY_UP) {
                 //Select prev item
                 pSelComponent->setSelected(false);

@@ -23,18 +23,20 @@ public:
     
     void setSelected(bool sel);
     
-protected:
+    int getNumRows() {return m_numRows;}
+    
     void addRow(const std::string& str="New Row");
-
+    
 private:
-    int m_numRows;
-    FORM *m_pForm;
-    FIELD **m_pFields;
     
     void createField(FIELD **pField, int y, std::string str);
     void selectField(int fieldReq);
     
     void createForm();
+    
+    int m_numRows;
+    FORM *m_pForm;
+    FIELD **m_pFields;
     
 };
 

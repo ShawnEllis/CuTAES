@@ -31,6 +31,9 @@ public:
     void add(Component *c);
 
     WINDOW* getWindow() {return m_pWindow;}
+    
+    int getWidth() {return m_width;}
+    int getHeight() {return m_height;}
 
 protected:
     WINDOW *m_pWindow;
@@ -44,7 +47,7 @@ protected:
     
 private:
     bool m_visible;
-    
+    int m_width, m_height;
 };
 
 #endif //PANEL_H
