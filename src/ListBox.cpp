@@ -14,6 +14,7 @@ ListBox::ListBox(Panel *pPanel, int x, int y, int w, int h) : Component(pPanel, 
     setSelectable(true);
     m_numRows = 1;
     m_pForm = 0;
+    m_curRow = 0;
     
     //Create field array, init to null
     m_pFields = new FIELD*[2];
@@ -45,18 +46,20 @@ bool ListBox::handleKeyPress(int key) {
     if (key == KEY_UP) {
         //Move up a field
         selectField(REQ_PREV_FIELD);
+        m_curRow = (m_curRow == 0) ? m_numRows - 1 : m_curRow - 1;
         return true;
     } else if (key == KEY_DOWN || key == 9) { //Tab key
         //Move down a field
         selectField(REQ_NEXT_FIELD);
+        m_curRow = (m_curRow == m_numRows - 1) ? 0 : m_curRow + 1;
         return true;
     } else if (key == KEY_BACKSPACE || key == 127) {
         //Delete prev. char
-        form_driver(m_pForm, REQ_DEL_PREV);
+//        form_driver(m_pForm, REQ_DEL_PREV);
         return true;
     } else if (key == 330) { //Delete key TODO: Fix this
         //Delete next char
-        form_driver(m_pForm, REQ_DEL_PREV);
+//        form_driver(m_pForm, REQ_DEL_PREV);
         return true;
     } else {
         FIELD *pField = current_field(m_pForm);
@@ -106,6 +109,17 @@ void ListBox::addRow(const std::string& str) {
     createForm();
 }
 
+void ListBox::setCurRow(int r) {
+    set_field_back(current_field(m_pForm), A_NORMAL);
+    form_driver(m_pForm, REQ_FIRST_FIELD);
+    for (int i = 0; i < r; i++) {
+        form_driver(m_pForm, REQ_NEXT_FIELD);
+    }
+    form_driver(m_pForm, REQ_BEG_LINE);
+    set_field_back(current_field(m_pForm), A_STANDOUT);
+    m_curRow = r;
+}
+
 /*
  *  Creates a new field at y, and sets the field's text to str.
  *  Sets the value of pField to point to the new field.
@@ -153,5 +167,6 @@ void ListBox::setSelected(bool sel) {
         set_field_back(current_field(m_pForm), A_NORMAL);
         form_driver(m_pForm, REQ_BEG_LINE);
     }
+    m_curRow = 0;
     wrefresh(m_pPanel->getWindow());
 }

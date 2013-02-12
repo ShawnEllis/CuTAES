@@ -14,14 +14,16 @@ extern std::ofstream dout;
 
 FormDialog::FormDialog(const std::string &title, int numFields) : Panel(title), m_numFields(numFields) {
     m_curField = 0;
-    m_formAccepted = false;
     m_rows = 0;
     m_cols = 0;
+    
     //Create field array, init to null
     m_pFields = new FIELD*[numFields + 1];
     for (int i = 0; i < numFields; i++) {
         m_pFields[i] = 0;
     }
+    
+    setReturnState(STATE_ERROR); //Default return is error
 }
 
 FormDialog::~FormDialog() {
@@ -36,9 +38,9 @@ FormDialog::~FormDialog() {
     refresh();
 }
 
-void FormDialog::show() {    
+StateType FormDialog::show() {    
     if (!m_pFields[0]) {
-        return;
+        return STATE_ERROR;
     }
     //Create form & window
     FIELD *pFields[m_curField];
@@ -63,28 +65,29 @@ void FormDialog::show() {
     
     post_form(m_pForm);
     
-    form_driver(m_pForm, REQ_FIRST_FIELD);
-    form_driver(m_pForm, REQ_END_LINE);
-    
     curs_set(1);
     Panel::show();
     curs_set(0);
+    return getReturnState();
 }
 
 void FormDialog::draw() {
     box(m_pWindow, 0, 0);
     
     //Draw title
-    mvwprintw(m_pWindow, 1, 1, m_title.data());
+    mvwprintw(m_pWindow, 1, 1, getTitle().data());
     WindowUtil::drawHLine(m_pWindow, 1, 2, m_cols + 1);
     
     drawComponents();
     
     //Draw cancel / ok commands
     
-    mvwprintw(m_pWindow, m_rows + 4, 1, "`/~: Cancel");
-	mvwprintw(m_pWindow, m_rows + 4, m_cols - 10, "ENTER: Accept");
+    mvwprintw(m_pWindow, m_rows + 4, 1, "Cancel: F3");
+	mvwprintw(m_pWindow, m_rows + 4, m_cols - 9, "Continue: F1");
  
+    form_driver(m_pForm, REQ_FIRST_FIELD);
+    form_driver(m_pForm, REQ_END_LINE);
+    
     wrefresh(m_pWindow);
 }
 
@@ -92,45 +95,70 @@ void FormDialog::draw() {
  * Overrides Panel's waitForInput().
  */
 bool FormDialog::handleKeyPress(int key) {
-#ifdef DEBUG
-    dout << key << std::endl;
-#endif
     if (key == KEY_UP) {
         //Move up a field
-        form_driver(m_pForm, REQ_PREV_FIELD);
+        isFieldValid();
+        form_driver(m_pForm, REQ_UP_FIELD);
         form_driver(m_pForm, REQ_END_LINE);
-    } else if (key == KEY_DOWN || key == 9) { //Tab key
+    }
+    else if (key == KEY_DOWN || key == 9) {
         //Move down a field
+        isFieldValid();
         form_driver(m_pForm, REQ_NEXT_FIELD);
-        form_driver(m_pForm, REQ_END_LINE);
-    } else if (key == KEY_LEFT) {
+        form_driver(m_pForm, REQ_END_LINE);    
+    }
+    else if (key == KEY_LEFT) {
         //Move left in field
-        form_driver(m_pForm, REQ_LEFT_CHAR);
-    } else if (key == KEY_RIGHT) {
+        if (form_driver(m_pForm, REQ_LEFT_CHAR) != E_OK) {
+            isFieldValid();
+            form_driver(m_pForm, REQ_LEFT_FIELD);
+            form_driver(m_pForm, REQ_END_LINE);
+        }
+    }
+    else if (key == KEY_RIGHT) {
         //TODO: Stop right arrow working as spacebar
         //Move right in field
-        form_driver(m_pForm, REQ_RIGHT_CHAR);
-    } else if (key == KEY_BACKSPACE || key == 127) {
+        if (form_driver(m_pForm, REQ_RIGHT_CHAR) != E_OK) {
+            isFieldValid();
+            form_driver(m_pForm, REQ_RIGHT_FIELD);
+            form_driver(m_pForm, REQ_END_LINE);
+        }  
+    }
+    else if (key == 9) { //Tab key
+        //Move to next field
+        isFieldValid();
+        form_driver(m_pForm, REQ_NEXT_FIELD);
+        form_driver(m_pForm, REQ_END_LINE);
+    }
+    else if (key == KEY_BACKSPACE || key == 127) {
         //Delete prev. char
         form_driver(m_pForm, REQ_DEL_PREV);
-    } else if (key == 330) { //Delete key TODO: Fix this
-        //Delete next char
-        form_driver(m_pForm, REQ_DEL_PREV);
-    } else if (key == CuTAES::KEY_ENT) {
-        //TODO: Accept form, if data in fields are valid
-        form_driver(m_pForm, REQ_NEXT_FIELD); //TODO: Find better way to validate cur field
+    }
+    else if (key == KEY_F(1)) {
         if (isDataValid()) {
-            m_formAccepted = true;
+            setReturnState(STATE_SUCCESS);
             hide();
             return true;
         }
-        form_driver(m_pForm, REQ_PREV_FIELD); //Stay on current line
-    } else if (key == 96) { //Ctrl cancels
+    }
+    else if (key == KEY_F(3)) {
+        setReturnState(STATE_CANCEL);
         hide();
-    } else {
+    }
+    else {
         //Send key to form driver
         form_driver(m_pForm, key);
     }
+    
+    return true; //Always consume the event
+}
+
+bool FormDialog::isFieldValid() {
+    if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD) {
+        set_field_back(current_field(m_pForm), A_STANDOUT);
+        return false;
+    }
+    set_field_back(current_field(m_pForm), A_UNDERLINE);
     return true;
 }
 
@@ -138,18 +166,20 @@ bool FormDialog::isDataValid() {
     for (int i = 0; i < m_numFields; i++) {
         std::string str = field_buffer(m_pFields[i], 0);
         StringUtil::trimEnd(str);
-        if (str.compare("") != 0) {
-            return true;
+        if (!isFieldValid() || str.compare("") == 0) {
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
-void FormDialog::getFormData(bool *pAccepted, std::string **pData) {
+bool FormDialog::getFormData(std::string **pData) {
+    if (getReturnState() != STATE_SUCCESS || pData == 0 || *pData != 0) {
+        return false;
+    }
 #ifdef DEBUG
-    dout << "Form " << m_title << " data: " << std::endl;
+    dout << "Form " << getTitle() << " data: " << std::endl;
 #endif //DEBUG
-    *pAccepted = m_formAccepted;
     std::string* data = new std::string[m_numFields];
     for (int i = 0; i < m_numFields; i++) {
         std::string str = field_buffer(m_pFields[i], 0);
@@ -160,6 +190,7 @@ void FormDialog::getFormData(bool *pAccepted, std::string **pData) {
 #endif //DEBUG
     }
     *pData = data;
+    return true;
 }
 
 void FormDialog::addField(const std::string &label, int rows, int cols, int type, int *typeParams, int nParams) {
@@ -213,13 +244,13 @@ void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int
             set_field_type(m_pFields[m_curField], TYPE_INTEGER, typeParams[0], typeParams[1], typeParams[2]);
         }
     } else if (type == FIELDTYPE_FLOAT) {
-//        if (typeParams == 0) {
-//            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, 1);
-//        } else if (nParams == 1) {
-//            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, typeParams[0]);
-//        } else if (nParams == 3) {
+        if (typeParams == 0) {
+            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, 0);
+        } else if (nParams == 1) {
+            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, typeParams[0]);
+        } else if (nParams == 3) {
 //            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, typeParams[0], typeParams[1], typeParams[2]);
-//        }
+        }
     }
     
     set_field_back(m_pFields[m_curField], A_UNDERLINE);

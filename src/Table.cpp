@@ -26,8 +26,6 @@ Table::Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths,
         pPanel->add(pLabel);
         w += m_colWidths[i] + 1;
     }
-                    
-    m_pLists[0]->setSelected(true);
 }
 
 Table::~Table() {
@@ -46,14 +44,32 @@ void Table::draw() {
 
 bool Table::handleKeyPress(int key) {
     if (key == KEY_LEFT) {
+        if (m_curList - 1 < 0) {
+            return false;
+        }
+        int r = m_pLists[m_curList]->getCurRow();
         m_pLists[m_curList]->setSelected(false);
-        m_curList = (m_curList - 1 < 0) ? m_numCols - 1 : m_curList - 1;
+        m_curList--;
         m_pLists[m_curList]->setSelected(true);
+        m_pLists[m_curList]->setCurRow(r);
         return true;
     } else if (key == KEY_RIGHT) {
+        if (m_curList + 1 >= m_numCols) {
+            return false;
+        }
+        int r = m_pLists[m_curList]->getCurRow();
         m_pLists[m_curList]->setSelected(false);
-        m_curList = (m_curList + 1 >= m_numCols) ? 0 : m_curList + 1;
-        m_pLists[m_curList]->setSelected(true);        
+        m_curList++;
+        m_pLists[m_curList]->setSelected(true);
+        m_pLists[m_curList]->setCurRow(r);
+        return true;
+    } else if (key == KEY_BACKSPACE) {
+        for (int i = 0; i < m_numCols; i++) {
+            m_pLists[i]->setSelected(true);
+        }
+        if (getch() == KEY_BACKSPACE) {
+            //Delete row
+        }
         return true;
     } else {
         int numRows = m_pLists[m_curList]->getNumRows();
@@ -69,6 +85,22 @@ bool Table::handleKeyPress(int key) {
     }
 }
 
-void Table::addRow(const std::string& str) {
+void Table::setSelected(bool sel) {
+    Component::setSelected(sel);
+    m_curList = 0;
+    m_pLists[m_curList]->setSelected(sel);
+}
 
+int Table::getNumRows() {
+    if (m_pLists == 0 || m_pLists[0] == 0) {
+        return 0;
+    }
+    return m_pLists[0]->getNumRows();
+}
+
+bool getDataInRow(int row, std::string **pData) {
+    if (pData == 0 || *pData != 0) {
+        return false;
+    }
+    return true;
 }

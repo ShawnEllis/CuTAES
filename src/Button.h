@@ -16,11 +16,13 @@ public:
 
     virtual bool handleKeyPress(int ch);
 
-    void setEventHandler(void(*handler)()) {eventHandler = handler;}
+    void setEventHandler(void(*handler)(Button *pButton)) {eventHandler = handler;}
+    
+    const std::string& getText() {return m_text;}
 
 private:
-    std::string text;
-    void(*eventHandler)();
+    std::string m_text;
+    void(*eventHandler)(Button *pButton);
 };
 
 #endif //BUTTON_H

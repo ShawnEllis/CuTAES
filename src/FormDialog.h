@@ -1,11 +1,14 @@
 /*
- * A highly configurable dialog which prompts the user for various data.
+ *  FormDialog.h
+ *
+ *  A highly configurable dialog which prompts the user for various data.
  * 
- * To use, create a new instance with the number of fields you will add.
- * Then, individually add each field.
- * 
- * Once the form is set up, call show() to get an array of data
- * corresponding to the fields you added, in order of addition.
+ *  Usage:
+ *  Create a new instance with the number of fields you will add.
+ *  Then, individually add each field with addField().
+ *  Once the form is set up, call show() to get an array of data
+ *  corresponding to the fields you added, in order of addition.
+ *
  */
 
 #ifndef FORMDIALOG_H
@@ -22,12 +25,12 @@ public:
     FormDialog(const std::string &title, int numFields);
     virtual ~FormDialog();
     
-    virtual void show();
+    virtual StateType show();
     virtual void draw();
     
     virtual bool handleKeyPress(int key);
     
-    void getFormData(bool *pAccepted, std::string **pData);
+    bool getFormData(std::string **pData);
     
     void addField(const std::string &label, int rows, int cols, int type=0, int *typeParams=0, int nParams=0);
     void addField(const std::string &label, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0, FIELD** pField=0);
@@ -38,12 +41,11 @@ private:
     int m_numFields, m_curField; //Total and current number of fields
     int m_rows, m_cols;
     
-    bool m_formAccepted;
-    
     FIELD **m_pFields;
     FORM *m_pForm;
     
     bool isDataValid();
+    bool isFieldValid();
 };
 
 enum {

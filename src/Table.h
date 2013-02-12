@@ -15,9 +15,13 @@ public:
     
     virtual bool handleKeyPress(int key);
     
+    virtual void setSelected(bool sel);
+    
+    int getNumRows();
+    
+    bool getDataInRow(int row, std::string **pData);
+    
 private:
-    void addRow(const std::string &label="New Row");
-
     int m_numCols;
     int *m_colWidths;
     

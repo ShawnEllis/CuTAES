@@ -17,8 +17,6 @@ public:
     
     virtual void draw();
     
-    virtual void registerActionTriggers() {}
-    
 private:
     std::string m_text;
 };

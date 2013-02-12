@@ -10,8 +10,7 @@
 std::ofstream dout;
 #endif //DEBUG
 
-#include "FormDialog.h"
-#include "CourseInfoScreen.h"
+#include "Queue.h"
 
 const int CuTAES::DEF_W = 80; //Default width of menus
 const int CuTAES::DEF_H = 24; //Default height of menus
@@ -63,9 +62,7 @@ int main(int argc, const char* argv[]) {
     if (argc == 2) {
         CuTAES::instance()->setWorkingDirectory(argv[1]); //Init working directory
     }
-//    StartScreen::instance()->show();
+    StartScreen::instance()->show();
     
-    CourseInfoScreen *courseInfoScr = new CourseInfoScreen();
-    courseInfoScr->show();
     return 0;
 }

@@ -6,8 +6,8 @@
 template <class T>
 class List {
 public:
-    List() {pFirst = 0; pLast = 0; m_size = 0;};
-    virtual ~List() {};
+    List() {pFirst = 0; pLast = 0; m_size = 0;}
+    virtual ~List() {}
 
     void addFront(T data) {
         ListNode<T> *node = new ListNode<T>(data);

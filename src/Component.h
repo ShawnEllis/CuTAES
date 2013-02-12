@@ -43,18 +43,24 @@ public:
 
     bool isSelectable() {return m_selectable;}
     bool isSelected() {return m_selected;}
-    void setSelectable(bool sel) {m_selectable = sel; m_selected = false;}
-    void setSelected(bool sel) { if (m_selectable) { m_selected = sel; } }
-
+    virtual void setSelected(bool sel) { if (m_selectable) { m_selected = sel; } }
+    
+    void* getUsrPtr() {return m_usrPtr;}
+    void setUsrPtr(void* p) {m_usrPtr = p;}
 
 protected:
     Panel *m_pPanel;
     
+    void setSelectable(bool sel) {m_selectable = sel; m_selected = false;}
+    
 private:
     int m_x, m_y;
     int m_width, m_height;
+    
     bool m_selectable;
     bool m_selected;
+    
+    void *m_usrPtr;
     
 };
 

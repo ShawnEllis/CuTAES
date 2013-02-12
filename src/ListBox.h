@@ -9,7 +9,11 @@
 #include "Component.h"
 #include <form.h>
 #include <string>
-
+#ifdef DEBUG
+#include <iostream>
+#include <fstream>
+extern std::ofstream dout;
+#endif //DEBUG
 class Panel;
 
 class ListBox : public Component {
@@ -21,12 +25,14 @@ public:
     
     virtual bool handleKeyPress(int ch);
     
-    void setSelected(bool sel);
+    virtual void setSelected(bool sel);
     
     int getNumRows() {return m_numRows;}
     
     void addRow(const std::string& str="New Row");
     
+    int getCurRow() {return m_curRow;}
+    void setCurRow(int r);
 private:
     
     void createField(FIELD **pField, int y, std::string str);
@@ -35,6 +41,7 @@ private:
     void createForm();
     
     int m_numRows;
+    int m_curRow;
     FORM *m_pForm;
     FIELD **m_pFields;
     
