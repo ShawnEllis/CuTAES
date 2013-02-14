@@ -86,8 +86,8 @@ bool Table::handleKeyPress(int key) {
 
 void Table::setSelected(bool sel) {
     Component::setSelected(sel);
-    m_curList = 0;
     m_pLists[m_curList]->setSelected(sel);
+    m_curList = 0;
 }
 
 int Table::getNumRows() {
