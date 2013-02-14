@@ -3,7 +3,8 @@
 #include <iostream>
 
 #include "CuTAES.h"
-
+#include "Queue.h"
+#include "TaApplication.h"
 #ifdef DEBUG
 extern std::ofstream dout;
 #endif //DEBUG
@@ -26,6 +27,22 @@ Student::Student(const string &first,
                               m_CGPA(cgpa),
                               m_majorGPA(gpa)
 {
+    m_pApplications = new Queue<TaApplication*>();
+}
+
+void Student::addApplication(TaApplication *pApp) {
+    m_pApplications->pushBack(pApp);
+}
+
+bool Student::hasAppliedForCourse(const std::string &course) {
+    Node<TaApplication*> *pCur = m_pApplications->front();
+    while (pCur != 0) {
+        if (pCur->value->getCourse().compare(course) == 0) {
+            return true;
+        }
+        pCur = pCur->m_pNext;
+    }
+    return false;
 }
 
 void Student::saveToFile() {

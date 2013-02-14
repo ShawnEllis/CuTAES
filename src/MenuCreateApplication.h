@@ -1,5 +1,5 @@
-#ifndef MENUCREATEAPPLICATION_H
-#define MENUCREATEAPPLICATION_H
+#ifndef MENU_CREATE_APPLICATION_H
+#define MENU_CREATE_APPLICATION_H
 
 #include <curses.h>
 #include "Panel.h"
@@ -9,7 +9,7 @@ class TaApplication;
 
 class MenuCreateApplication : public Panel {
 public:
-    MenuCreateApplication(const std::string& strCourse);
+    MenuCreateApplication(const std::string& course);
     virtual ~MenuCreateApplication();
 
     virtual bool getData(TaApplication**);
@@ -17,11 +17,11 @@ public:
     virtual bool handleKeyPress(int key);
     
 private:
-    const std::string& m_strCourse;
+    std::string m_strCourse;
     
     Table *pRelatedCoursesTable, *pTaCoursesTable;
     
 };
 
-#endif //MENUCREATEAPPLICATION_H
+#endif //MENUCREATE_APPLICATION_H
 

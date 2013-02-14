@@ -1,5 +1,5 @@
 /*
- *  FormDialog.h
+ *  DialogForm.h
  *
  *  A highly configurable dialog which prompts the user for various data.
  * 
@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef FORMDIALOG_H
-#define FORMDIALOG_H
+#ifndef DialogForm_H
+#define DialogForm_H
 
 #include "Panel.h"
 #include <string>
@@ -20,10 +20,10 @@
 #include <form.h>
 #include "StringUtil.h"
 
-class FormDialog : public Panel {
+class DialogForm : public Panel {
 public:
-    FormDialog(const std::string &title, int numFields);
-    virtual ~FormDialog();
+    DialogForm(const std::string &title, int numFields);
+    virtual ~DialogForm();
     
     virtual StateType show();
     virtual void draw();
@@ -56,4 +56,4 @@ enum {
 };
 
 
-#endif //FORMDIALOG_H
+#endif //DialogForm_H

@@ -21,6 +21,8 @@ public:
     
     bool getDataInRow(int row, std::string **pData);
     
+    void setEditable(bool b) {setSelectable(b);}
+    
 private:
     int m_numCols;
     int *m_colWidths;

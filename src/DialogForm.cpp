@@ -1,4 +1,4 @@
-#include "FormDialog.h"
+#include "DialogForm.h"
 
 #include "Component.h"
 #include "ListNode.h"
@@ -12,7 +12,7 @@
 extern std::ofstream dout;
 #endif //DEBUG
 
-FormDialog::FormDialog(const std::string &title, int numFields) : Panel(title), m_numFields(numFields) {
+DialogForm::DialogForm(const std::string &title, int numFields) : Panel(title), m_numFields(numFields) {
     m_curField = 0;
     m_rows = 0;
     m_cols = 0;
@@ -26,7 +26,7 @@ FormDialog::FormDialog(const std::string &title, int numFields) : Panel(title), 
     setReturnState(STATE_ERROR); //Default return is error
 }
 
-FormDialog::~FormDialog() {
+DialogForm::~DialogForm() {
     unpost_form(m_pForm);
 //    free_form(m_pForm); TODO: Fix segfault
     for (int i = 0; i < m_numFields; i++) {
@@ -38,7 +38,7 @@ FormDialog::~FormDialog() {
     refresh();
 }
 
-StateType FormDialog::show() {    
+StateType DialogForm::show() {    
     if (!m_pFields[0]) {
         return STATE_ERROR;
     }
@@ -58,7 +58,7 @@ StateType FormDialog::show() {
     m_rows = std::max(m_rows, rows);
     m_cols = std::max(m_cols, cols);
     delwin(m_pWindow);
-    m_pWindow = newwin(m_rows + 6, m_cols + 4, 4, CuTAES::DEF_W / 2 - (m_cols + 4) / 2);
+    m_pWindow = newwin(m_rows + 6, m_cols + 4, (getmaxy(stdscr) - m_rows) / 2 - 3, (getmaxx(stdscr) - m_cols) / 2 - 2);
     
     set_form_win(m_pForm, m_pWindow);
     set_form_sub(m_pForm, derwin(m_pWindow, m_rows, m_cols, 2, 2));
@@ -71,7 +71,7 @@ StateType FormDialog::show() {
     return getReturnState();
 }
 
-void FormDialog::draw() {
+void DialogForm::draw() {
     box(m_pWindow, 0, 0);
     
     //Draw title
@@ -94,7 +94,7 @@ void FormDialog::draw() {
 /*
  * Overrides Panel's waitForInput().
  */
-bool FormDialog::handleKeyPress(int key) {
+bool DialogForm::handleKeyPress(int key) {
     if (key == KEY_UP) {
         //Move up a field
         isFieldValid();
@@ -153,7 +153,7 @@ bool FormDialog::handleKeyPress(int key) {
     return true; //Always consume the event
 }
 
-bool FormDialog::isFieldValid() {
+bool DialogForm::isFieldValid() {
     if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD) {
         set_field_back(current_field(m_pForm), A_STANDOUT);
         return false;
@@ -162,7 +162,7 @@ bool FormDialog::isFieldValid() {
     return true;
 }
 
-bool FormDialog::isDataValid() {
+bool DialogForm::isDataValid() {
     for (int i = 0; i < m_numFields; i++) {
         std::string str = field_buffer(m_pFields[i], 0);
         StringUtil::trimEnd(str);
@@ -173,7 +173,7 @@ bool FormDialog::isDataValid() {
     return true;
 }
 
-bool FormDialog::getFormData(std::string **pData) {
+bool DialogForm::getFormData(std::string **pData) {
     if (getReturnState() != STATE_SUCCESS || pData == 0 || *pData != 0) {
         return false;
     }
@@ -193,7 +193,7 @@ bool FormDialog::getFormData(std::string **pData) {
     return true;
 }
 
-void FormDialog::addField(const std::string &label, int rows, int cols, int type, int *typeParams, int nParams) {
+void DialogForm::addField(const std::string &label, int rows, int cols, int type, int *typeParams, int nParams) {
     addField(label, rows, cols, 0, m_curField * 2, type, typeParams, nParams);
 }
 
@@ -202,7 +202,7 @@ void FormDialog::addField(const std::string &label, int rows, int cols, int type
  * Automatically creates a label component.
  * Include | in your label to designate a field's initial content.
  */
-void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {    
+void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {    
     //Split the label and field contents.
     int i;
     std::string contents, label;
@@ -270,7 +270,7 @@ void FormDialog::addField(const std::string &lbl, int rows, int cols, int x, int
     m_curField++;
 }
 
-void FormDialog::addList(const std::string &label, int width, int height, int x, int y) {
+void DialogForm::addList(const std::string &label, int width, int height, int x, int y) {
     //Create the list
     ListBox *pList = new ListBox(this, x + 1, y + 4, width, height);
     add(pList);

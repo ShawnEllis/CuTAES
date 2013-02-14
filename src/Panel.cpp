@@ -20,8 +20,11 @@ Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h
     m_componentList = *(new List<Component*>());
     m_selectableList = *(new List<Component*>());
     
-    m_pWindow = newwin(h, w, 0, (CuTAES::DEF_W - w) / 2);
-    wrefresh(m_pWindow);
+    getmaxyx(stdscr, m_termHeight, m_termWidth); //Used to determine when to re-center panel
+    
+    m_pWindow = newwin(h, w, (m_termHeight - h) / 2, (m_termWidth - w) / 2);
+
+    m_pPanel = new_panel(m_pWindow);
 }
 
 Panel::~Panel() {
@@ -33,22 +36,41 @@ StateType Panel::show() {
 #ifdef DEBUG
     dout << "Show panel " << m_title << endl;
 #endif //DEBUG
-    
     m_visible = true;
+    show_panel(m_pPanel);
     draw();
     waitForInput();
     return m_returnState;
 }
 
+void Panel::hide()  {
+    hide_panel(m_pPanel);
+    m_visible = false;
+    WindowUtil::fillRect(m_pWindow, 0, 0, getWidth(), getHeight(), ' ');
+    update_panels();
+}
+
 void Panel::draw() {
+    //Stay centered on screen
+    int termW, termH;
+    getmaxyx(stdscr, termH, termW);
+    if (termW != m_termWidth || termH != m_termHeight) {
+        clear();
+        m_termWidth = termW;
+        m_termHeight = termH;
+        wresize(m_pWindow, getHeight(), getWidth()); //Necessary because resizing term resizes term-sized windows
+        move_panel(m_pPanel, (m_termHeight - getHeight()) / 2, (m_termWidth - getWidth()) / 2);
+    }
+    
     //Decorate the window
-    box(m_pWindow, 0 , 0);
-    mvwprintw(m_pWindow, 1, (m_width - m_title.length()) / 2, m_title.data());
-    WindowUtil::drawHLine(m_pWindow, 1, 2, m_width - 2);
+    WindowUtil::drawRect(m_pWindow, 0, 0, getWidth(), getHeight());
+    mvwprintw(m_pWindow, 1, (getWidth() - m_title.length()) / 2, m_title.data());
+    WindowUtil::drawHLine(m_pWindow, 1, 2, getWidth() - 2);
     
     drawComponents();
     
-    wrefresh(m_pWindow);
+    refresh();
+    update_panels();
 }
 
 /*
@@ -64,6 +86,7 @@ void Panel::drawComponents() {
 
 void Panel::waitForInput() {
     while (m_visible) {
+        update_panels();
         wrefresh(m_pWindow);
         int ch = getch();
         if (m_pSelNode != 0 && m_pSelNode->data->handleKeyPress(ch)) {

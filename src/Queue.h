@@ -89,7 +89,7 @@ public:
     /*
      * Returns the front node. Useful for iterating over the queue.
      */
-    Node<T> front() {
+    Node<T> *front() {
         return m_pFirst;
     }
     

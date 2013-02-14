@@ -3,6 +3,7 @@
 
 #include "Panel.h"
 #include "WindowUtil.h"
+#include "StringUtil.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -36,9 +37,6 @@ ListBox::~ListBox() {
 }
 
 void ListBox::draw() {
-#ifdef DEBUG
-    dout << "ListBox:draw()" << std::endl;
-#endif //DEBUG
     WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight());
 }
 
@@ -81,9 +79,17 @@ bool ListBox::handleKeyPress(int key) {
     return false;
 }
 
+std::string ListBox::getDataAt(int r) {
+    //Validate cur field
+    form_driver(m_pForm, REQ_VALIDATION);
+    std::string data = field_buffer(m_pFields[r], 0);
+    StringUtil::trimEnd(data);
+    return data;
+}
+
 /*
-    Adds a row to the list, keeping the null row and '...' row in the correct positions.
-    Must copy data to new array due to limitations in the forms library.
+ *  Adds a row to the list, keeping the null row and '...' row in the correct positions.
+ *  Must copy data to new array due to limitations in the forms library.
  */
 void ListBox::addRow(const std::string& str) {
     FIELD **pNewFields = new FIELD*[m_numRows + 2];
@@ -120,6 +126,30 @@ void ListBox::setCurRow(int r) {
     m_curRow = r;
 }
 
+void ListBox::setSelected(bool sel) {
+    Component::setSelected(sel);
+    if (sel) {
+        selectField(REQ_FIRST_FIELD);
+    } else {
+        set_field_back(current_field(m_pForm), A_NORMAL);
+        form_driver(m_pForm, REQ_BEG_LINE);
+    }
+    m_curRow = 0;
+    wrefresh(m_pPanel->getWindow());
+}
+
+/*
+ *  Move using the given form driver request.
+ *  De-highlights the old selection and highlights the new one.
+ */
+void ListBox::selectField(int formDriverReq) {
+    //Unhighlight cur field
+    set_field_back(current_field(m_pForm), A_NORMAL);
+    form_driver(m_pForm, formDriverReq);
+    form_driver(m_pForm, REQ_BEG_LINE);
+    set_field_back(current_field(m_pForm), A_STANDOUT);
+}
+
 /*
  *  Creates a new field at y, and sets the field's text to str.
  *  Sets the value of pField to point to the new field.
@@ -132,18 +162,13 @@ void ListBox::createField(FIELD **pField, int y, std::string str) {
     field_opts_on(*pField, O_BLANK);
 }
 
-void ListBox::selectField(int fieldReq) {
-    //Unhighlight cur field
-    set_field_back(current_field(m_pForm), A_NORMAL);
-    form_driver(m_pForm, fieldReq);
-    form_driver(m_pForm, REQ_BEG_LINE);
-    set_field_back(current_field(m_pForm), A_STANDOUT);
-}
-
 void ListBox::createForm() {
     if (m_pForm != 0) {
         unpost_form(m_pForm);
         free_form(m_pForm);
+//        set_form_fields(m_pForm, m_pFields); TODO: revisit
+//        scale_form(m_pForm, &rows, &cols);
+//        return;
     }
     m_pForm = new_form(m_pFields);
     int rows, cols;
@@ -159,14 +184,3 @@ void ListBox::createForm() {
     }
 }
 
-void ListBox::setSelected(bool sel) {
-    Component::setSelected(sel);
-    if (sel) {
-        selectField(REQ_FIRST_FIELD);
-    } else {
-        set_field_back(current_field(m_pForm), A_NORMAL);
-        form_driver(m_pForm, REQ_BEG_LINE);
-    }
-    m_curRow = 0;
-    wrefresh(m_pPanel->getWindow());
-}

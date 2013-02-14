@@ -3,6 +3,10 @@
 
 #include <string>
 
+template<class T>
+class Queue;
+class TaApplication;
+
 class Student {
 public:
 	Student(const std::string &first, const std::string &last,
@@ -13,6 +17,9 @@ public:
     virtual ~Student() {};
 
 	void saveToFile();
+    
+    void addApplication(TaApplication *pApp);
+    bool hasAppliedForCourse(const std::string& course);
 
 private:
     std::string m_firstName, m_lastName;
@@ -21,6 +28,8 @@ private:
     std::string m_major;
     int m_yearStanding;
     float m_CGPA, m_majorGPA;
+    
+    Queue<TaApplication*> *m_pApplications;
 };
 
 #endif //STUDENT_H

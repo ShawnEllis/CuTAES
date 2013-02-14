@@ -25,19 +25,22 @@ public:
     
     virtual bool handleKeyPress(int ch);
     
-    virtual void setSelected(bool sel);
+    std::string getDataAt(int r);
+    void getData(std::string**);
     
     int getNumRows() {return m_numRows;}
-    
     void addRow(const std::string& str="New Row");
     
     int getCurRow() {return m_curRow;}
     void setCurRow(int r);
+    
+    virtual void setSelected(bool sel);
+    
 private:
     
-    void createField(FIELD **pField, int y, std::string str);
-    void selectField(int fieldReq);
+    void selectField(int formDriverReq);
     
+    void createField(FIELD **pField, int y, std::string str);
     void createForm();
     
     int m_numRows;

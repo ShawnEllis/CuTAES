@@ -1,12 +1,13 @@
 #include "MenuCreateApplication.h"
+#include <stdlib.h>
 
+#include "MenuCourseSelector.h"
 #include "Table.h"
 #include "Label.h"
 #include "TaApplication.h"
 
-MenuCreateApplication::MenuCreateApplication(const std::string& strCourse)
-: Panel("Create " + strCourse + " Application: Enter Course Info", 70), m_strCourse(strCourse) {
-    
+MenuCreateApplication::MenuCreateApplication(const std::string& course)
+: Panel("Create " + course + " Application: Enter Course Info", 70), m_strCourse(course) {
     setReturnState(STATE_ERROR);
     
     //Create related courses table
@@ -18,7 +19,7 @@ MenuCreateApplication::MenuCreateApplication(const std::string& strCourse)
     //Create TA info table
     std::string labels2[] = {"Course", "Year", "Term", "Supervisor"};
     int colWidths2[] = {8, 4, 4, 16};
-    pTaCoursesTable = new Table(this, pRelatedCoursesTable->getX() +  pRelatedCoursesTable->getWidth() - 2, 4, 16, 4, colWidths2, labels2);
+    pTaCoursesTable = new Table(this, pRelatedCoursesTable->getX() +  pRelatedCoursesTable->getWidth() + 1, 4, 16, 4, colWidths2, labels2);
     add(pTaCoursesTable);
     
     //Create labels
@@ -55,8 +56,23 @@ bool MenuCreateApplication::getData(TaApplication **pApplication) {
         return false;
     }
     *pApplication = new TaApplication(m_strCourse);
+    std::string *pData;
+    
+    //Save Related Courses data to application
     for (int i = 0 ; i < pRelatedCoursesTable->getNumRows(); i++) {
-        
+        pData = 0;
+        pRelatedCoursesTable->getDataInRow(i, &pData);
+        //Create RelatedCourse using row data
+        (*pApplication)->addRelatedCourse(pData[0], std::atoi(pData[1].data()), pData[2][0], pData[3]);
     }
+    
+    //Save TA'd courses data to application
+    for (int i = 0 ; i < pTaCoursesTable->getNumRows(); i++) {
+        pData = 0;
+        pTaCoursesTable->getDataInRow(i, &pData);
+        //Create RelatedCourse using row data
+        (*pApplication)->addTaCourse(pData[0], std::atoi(pData[1].data()), pData[2][0], pData[3]);
+    }
+    
     return true;
 }

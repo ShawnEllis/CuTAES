@@ -12,7 +12,7 @@ Table::Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths,
     
     //Set width and init m_colWidths
     m_colWidths = new int[numCols];
-    int w = 4;
+    int w = 1;
     for (int i = 0; i < numCols; i++) {
         w += colWidths[i];
         m_colWidths[i] = colWidths[i];
@@ -22,8 +22,7 @@ Table::Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths,
     w = 0;
     for (int i = 0; i < numCols; i++) {
         m_pLists[i] = new ListBox(pPanel, x + w, y + 2, colWidths[i] + 2, colH);
-        Label *pLabel = new Label(pPanel, labels[i], x + w + 1, y + 1);
-        pPanel->add(pLabel);
+        pPanel->add(new Label(pPanel, labels[i], x + w + 1, y + 1));
         w += m_colWidths[i] + 1;
     }
 }
@@ -33,8 +32,8 @@ Table::~Table() {
 }
 
 void Table::draw() {
-    WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY() + 2, getWidth() - m_numCols + 1, getHeight() - 2);
-    WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY(), getWidth() - m_numCols + 1, getHeight());
+    WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY() + 2, getWidth(), getHeight() - 2);
+    WindowUtil::drawRect(m_pPanel->getWindow(), getX(), getY(), getWidth(), getHeight());
     int w = m_colWidths[0] + 1;
     for (int i = 1; i < m_numCols; i++) {
         WindowUtil::drawVLine(m_pPanel->getWindow(), getX() + w, getY() + 1, getHeight() - 2);
@@ -95,12 +94,21 @@ int Table::getNumRows() {
     if (m_pLists == 0 || m_pLists[0] == 0) {
         return 0;
     }
-    return m_pLists[0]->getNumRows();
+    return m_pLists[0]->getNumRows() - 1;
 }
 
-bool getDataInRow(int row, std::string **pData) {
+/*
+ *  Returns the data in the given row, as an array of string.
+ */
+bool Table::getDataInRow(int row, std::string **pData) {
     if (pData == 0 || *pData != 0) {
         return false;
     }
+    //Create an array of string to store data
+    std::string *data = new std::string[m_numCols];
+    for (int i = 0; i < m_numCols; i++) {
+        data[i] = m_pLists[i]->getDataAt(row);
+    }
+    *pData = data;
     return true;
 }

@@ -1,5 +1,5 @@
-#ifndef COURSE_SELECTOR_H
-#define COURSE_SELECTOR_H
+#ifndef MENU_COURSE_SELECTOR_H
+#define MENU_COURSE_SELECTOR_H
 
 #include "Panel.h"
 #include <curses.h>
@@ -26,5 +26,5 @@ private:
     void setSelectedCourse(const std::string& str) {m_selectedCourse = str;}
 };
 
-#endif //COURSE_SELECTOR_H
+#endif //MENU_COURSE_SELECTOR_H
 

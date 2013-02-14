@@ -3,6 +3,7 @@
 
 #include <curses.h>
 #include <string>
+#include <panel.h>
 
 #include "CuTAES.h"
 #include "StateType.h"
@@ -19,7 +20,7 @@ public:
     virtual ~Panel();
 
     virtual StateType show();
-    virtual void hide() {m_visible = false;}
+    virtual void hide();
 
     /*
         Used by subclasses to handle special input.
@@ -33,6 +34,9 @@ public:
     
     int getWidth() {return m_width;}
     int getHeight() {return m_height;}
+    int getX() {return getbegx(m_pWindow);}
+    int getY() {return getbegy(m_pWindow);}
+    
     std::string getTitle() {return m_title;}
     
     StateType getReturnState() {return m_returnState;}
@@ -44,6 +48,8 @@ protected:
     ListNode<Component*> *m_pSelNode; //TODO: Clean up menu navigation
     
     virtual void draw();
+    void erase() {hide_panel(m_pPanel); update_panels();}
+    
     virtual void drawComponents();
     
     virtual void waitForInput();
@@ -51,14 +57,19 @@ protected:
     void setReturnState(StateType state) {m_returnState = state;}
     
 private:
+    bool termSizeChanged();
+    
     bool m_visible;
     int m_width, m_height;
+    int m_termWidth, m_termHeight;
 
     std::string m_title;
     
     StateType m_returnState;
     
-    List<Component*> m_componentList; //TODO: Make private
+    List<Component*> m_componentList;
+    
+    PANEL *m_pPanel;
 };
 
 #endif //PANEL_H

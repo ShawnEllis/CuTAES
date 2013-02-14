@@ -17,6 +17,13 @@ class TaApplication {
 public:
     TaApplication(const std::string& m_course);
     
+    void addRelatedCourse(const std::string& course, int year, char term, const std::string& grade);
+    void addTaCourse(const std::string& course, int year, char term, const std::string& supervisor);
+    
+    void saveToFile();
+    
+    const std::string& getCourse() {return m_course;}
+    
     struct RelatedCourse {
         std::string m_course;
         int m_year;

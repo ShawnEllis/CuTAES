@@ -18,10 +18,10 @@ void WindowUtil::drawVLine(WINDOW *pWindow, int x, int y, int l, int ch) {
 }
 
 void WindowUtil::drawRect(WINDOW *pWindow, int x, int y, int w, int h,
-                          int tl, int tr,
-                          int bl, int br,
                           int t,  int b,
-                          int l,  int r) {
+                          int l,  int r,
+                          int tl, int tr,
+                          int bl, int br) {
     drawVLine(pWindow, x,         y        , h, l);
     drawVLine(pWindow, x + w - 1, y        , h, r);
     drawHLine(pWindow, x,         y        , w, t);
