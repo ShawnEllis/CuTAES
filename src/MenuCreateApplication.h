@@ -9,7 +9,7 @@ class TaApplication;
 
 class MenuCreateApplication : public Panel {
 public:
-    MenuCreateApplication(const std::string& course);
+    MenuCreateApplication(const std::string& course, const std::string& studentID);
     virtual ~MenuCreateApplication();
 
     virtual bool getData(TaApplication**);
@@ -18,6 +18,7 @@ public:
     
 private:
     std::string m_strCourse;
+    std::string m_strStudentID;
     
     Table *pRelatedCoursesTable, *pTaCoursesTable;
     

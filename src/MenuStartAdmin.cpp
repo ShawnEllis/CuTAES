@@ -61,7 +61,7 @@ void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     std::string strCourse = pCourseSelector->getSelectedCourse();
     delete pCourseSelector;
     //TODO: show list of applications
-    MenuViewSummary *pViewSummary = new MenuViewSummary(strCourse + ": Pending Applications");
+    MenuViewSummary *pViewSummary = new MenuViewSummary(strCourse + ": Pending Applications", strCourse);
     pViewSummary->show();
     delete pViewSummary;
     MenuStartAdmin::instance()->draw();

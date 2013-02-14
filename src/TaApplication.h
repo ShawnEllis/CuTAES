@@ -15,7 +15,7 @@ class Queue;
 
 class TaApplication {
 public:
-    TaApplication(const std::string& m_course);
+    TaApplication(const std::string& course, const std::string& studentID);
     
     void addRelatedCourse(const std::string& course, int year, char term, const std::string& grade);
     void addTaCourse(const std::string& course, int year, char term, const std::string& supervisor);
@@ -23,6 +23,8 @@ public:
     void saveToFile();
     
     const std::string& getCourse() {return m_course;}
+    
+    const std::string& getStudentID() {return m_studentID;}
     
     struct RelatedCourse {
         std::string m_course;
@@ -40,6 +42,7 @@ public:
     
 private:
     std::string m_course;
+    std::string m_studentID;
     
     Queue<RelatedCourse> *m_pRelatedCourses;
     Queue<TaCourse> *m_pTaCourses;

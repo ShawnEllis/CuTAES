@@ -20,6 +20,7 @@ public:
     int getNumRows();
     
     bool getDataInRow(int row, std::string **pData);
+    void addRow(std::string *pData);
     
     void setEditable(bool b) {setSelectable(b);}
     

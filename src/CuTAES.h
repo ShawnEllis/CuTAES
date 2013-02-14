@@ -7,6 +7,8 @@
  *  info such as screen size, file directory, current user, etc.
  *
  *  TODO: Switch m_workingDirectory before submitting file
+ *  TODO: Fix TaApplication saving bug where supervisor field of TA'd courses isn't saved
+ *  TODO: Free memory
  *
  */
 

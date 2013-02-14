@@ -13,7 +13,7 @@
 
 class MenuViewSummary : public Panel {
 public:
-    MenuViewSummary(const std::string& title);
+    MenuViewSummary(const std::string& title, const std::string& course);
     virtual ~MenuViewSummary();
     
     virtual bool handleKeyPress(int key);

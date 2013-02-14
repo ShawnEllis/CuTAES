@@ -112,3 +112,15 @@ bool Table::getDataInRow(int row, std::string **pData) {
     *pData = data;
     return true;
 }
+
+/*
+ *  Add a row of data to the table.
+ */
+void Table::addRow(std::string *pData) {
+    if (pData == 0) {
+        return;
+    }
+    for (int i = 0; i < m_numCols; i++) {
+        m_pLists[i]->addRow(pData[i]);
+    }
+}

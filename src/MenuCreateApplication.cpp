@@ -6,8 +6,8 @@
 #include "Label.h"
 #include "TaApplication.h"
 
-MenuCreateApplication::MenuCreateApplication(const std::string& course)
-: Panel("Create " + course + " Application: Enter Course Info", 70), m_strCourse(course) {
+MenuCreateApplication::MenuCreateApplication(const std::string& course, const std::string& student)
+: Panel("Create " + course + " Application: Enter Course Info", 70), m_strCourse(course), m_strStudentID(student) {
     setReturnState(STATE_ERROR);
     
     //Create related courses table
@@ -55,7 +55,7 @@ bool MenuCreateApplication::getData(TaApplication **pApplication) {
     if (getReturnState() != STATE_SUCCESS || pApplication == 0 || *pApplication != 0) {
         return false;
     }
-    *pApplication = new TaApplication(m_strCourse);
+    *pApplication = new TaApplication(m_strCourse, m_strStudentID);
     std::string *pData;
     
     //Save Related Courses data to application

@@ -13,14 +13,14 @@ using namespace std;
 
 Student::Student(const string &first,
                  const string &last,
-                 const string &num,
+                 const string &id,
                  const string &email,
                  const string &maj,
                  int year,
                  float cgpa,
                  float gpa) : m_firstName(first),
                               m_lastName(last),
-                              m_stuNum(num),
+                              m_studentID(id),
                               m_emailAddr(email),
                               m_major(maj),
                               m_yearStanding(year),
@@ -46,7 +46,7 @@ bool Student::hasAppliedForCourse(const std::string &course) {
 }
 
 void Student::saveToFile() {
-    string filename = CuTAES::instance()->getDataDirectory() + "student/" + m_stuNum + ".txt";
+    string filename = CuTAES::instance()->getDataDirectory() + "student/" + m_studentID + ".txt";
     ofstream file;
     file.open(filename.data());
 #ifdef DEBUG
@@ -55,7 +55,7 @@ void Student::saveToFile() {
     if (file.is_open()) {
         file << m_firstName << "\n";
         file << m_lastName << "\n";
-        file << m_stuNum << "\n";
+        file << m_studentID << "\n";
         file << m_emailAddr << "\n";
         file << m_major << "\n";
         file << m_yearStanding << "\n";

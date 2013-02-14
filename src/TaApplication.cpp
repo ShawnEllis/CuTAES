@@ -7,8 +7,9 @@
 #include "Queue.h"
 #include "CuTAES.h"
 
-TaApplication::TaApplication(const std::string& strCourse) {
-    m_course = strCourse;
+TaApplication::TaApplication(const std::string& course, const std::string& studentID) {
+    m_course = course;
+    m_studentID = studentID;
     m_pRelatedCourses = new Queue<RelatedCourse>();
     m_pTaCourses = new Queue<TaCourse>();
 }
@@ -30,7 +31,7 @@ void TaApplication::saveToFile() {
     file.open(filename.str().data());
     if (file.is_open()) {
         file << m_course << std::endl;
-        file << "<studentNum>" << std::endl;
+        file << m_studentID << std::endl;
         file << "pending" << std::endl; //TODO: use actual val
         file << "related" << std::endl;        
         {
@@ -56,7 +57,8 @@ void TaApplication::saveToFile() {
                 pCur = pCur->m_pNext;
             }
         }
-        
+        file << "end" << std::endl;
+        file.flush();
         file.close();
     }
 }

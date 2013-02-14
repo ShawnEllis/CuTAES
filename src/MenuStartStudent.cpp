@@ -8,6 +8,7 @@
 #include "Student.h"
 #include "TaApplication.h"
 #include "DialogYesNo.h"
+#include "Database.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -73,7 +74,7 @@ void MenuStartStudent::handleCreatePressed(Button *pButton) {
         std::string strCourse = pCourseSelector->getSelectedCourse();
         delete pCourseSelector;
         
-        MenuCreateApplication *pCreateApplication = new MenuCreateApplication(strCourse);
+        MenuCreateApplication *pCreateApplication = new MenuCreateApplication(strCourse, pStudent->getStudentID());
         if (pCreateApplication->show() != STATE_SUCCESS) {
             delete pCreateApplication;
             MenuStartStudent::instance()->draw();
@@ -83,7 +84,7 @@ void MenuStartStudent::handleCreatePressed(Button *pButton) {
         TaApplication *pApplication = 0;
         if (pCreateApplication->getData(&pApplication)) {
             pApplication->saveToFile();
-            delete pApplication; //TODO: Store in DB
+            Database::instance()->addApplication(pApplication);
         }
         
         delete pCreateApplication;
