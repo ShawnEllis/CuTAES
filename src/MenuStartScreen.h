@@ -19,7 +19,8 @@ public:
     virtual ~MenuStartScreen();
     
     static void handleExitPressed(Button *pButton);
-    static void handleStudentPressed(Button *pButton);
+    static void handleUndergradPressed(Button *pButton);
+    static void handleGradPressed(Button *pButton);
     static void handleAdminPressed(Button *pButton);
     
 private:

@@ -1,6 +1,5 @@
 #include "Student.h"
-#include <fstream>
-#include <iostream>
+#include <stdlib.h>
 
 #include "CuTAES.h"
 #include "Queue.h"
@@ -11,23 +10,12 @@ extern std::ofstream dout;
 
 using namespace std;
 
-Student::Student(const string &first,
-                 const string &last,
-                 const string &id,
-                 const string &email,
-                 const string &maj,
-                 int year,
-                 float cgpa,
-                 float gpa) : m_firstName(first),
-                              m_lastName(last),
-                              m_studentID(id),
-                              m_emailAddr(email),
-                              m_major(maj),
-                              m_yearStanding(year),
-                              m_CGPA(cgpa),
-                              m_majorGPA(gpa)
-{
+Student::Student(string *data) {
     m_pApplications = new Queue<TaApplication*>();
+    m_firstName = data[0];
+    m_lastName = data[1];
+    m_studentID = data[2];
+    m_emailAddr = data[3];
 }
 
 void Student::addApplication(TaApplication *pApp) {
@@ -46,21 +34,22 @@ bool Student::hasAppliedForCourse(const std::string &course) {
 }
 
 void Student::saveToFile() {
+    if (m_studentID.compare("") == 0) {
+        return;
+    }
     string filename = CuTAES::instance()->getDataDirectory() + "student/" + m_studentID + ".txt";
     ofstream file;
-    file.open(filename.data());
+    file.open(filename.data(), fstream::out | fstream::trunc);
 #ifdef DEBUG
     dout << "Student: Saving to " << filename << std::endl;
 #endif //DEBUG
     if (file.is_open()) {
-        file << m_firstName << "\n";
-        file << m_lastName << "\n";
-        file << m_studentID << "\n";
-        file << m_emailAddr << "\n";
-        file << m_major << "\n";
-        file << m_yearStanding << "\n";
-        file << m_CGPA << "\n";
-        file << m_majorGPA << "\n";
+        file << (m_type == TYPE_UNDERGRAD ? "undergrad" : "grad") << endl;
+        string* pData = 0;
+        for (int i = 0 ; i < getData(&pData); i++) {
+            file << pData[i] << endl;
+        }
+        delete [] pData;
         file.close();
     }
 #ifdef DEBUG

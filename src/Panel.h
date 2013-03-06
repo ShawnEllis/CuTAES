@@ -43,9 +43,10 @@ public:
     
 protected:
     WINDOW *m_pWindow;
+    PANEL *m_pPanel;
     
-    List<Component*> m_selectableList; //TODO: Make private
-    ListNode<Component*> *m_pSelNode; //TODO: Clean up menu navigation
+    List<Component*> *m_pSelectableList;
+    ListNode<Component*> *m_pSelNode;
     
     virtual void draw();
     void erase() {hide_panel(m_pPanel); update_panels();}
@@ -67,9 +68,7 @@ private:
     
     StateType m_returnState;
     
-    List<Component*> m_componentList;
-    
-    PANEL *m_pPanel;
+    List<Component*> *m_pComponentList;
 };
 
 #endif //PANEL_H

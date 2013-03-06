@@ -7,6 +7,8 @@
 #include "Student.h"
 #include "Database.h"
 
+#include "Queue.h"
+
 #ifdef DEBUG
 #include <iostream>
 #include <fstream>
@@ -38,46 +40,6 @@ CuTAES::CuTAES() {
     refresh();
 }
 
-Student* CuTAES::getActiveUser() {
-    if (m_pActiveUser == 0) {
-        //Create student info dialog
-        DialogForm *pForm = new DialogForm("Enter Student Info", 8);
-        pForm->addField("First Name:   ", 1, 32, FIELDTYPE_ALPHA);
-        pForm->addField("Last Name:    ", 1, 32, FIELDTYPE_ALPHA);
-        pForm->addField("Student ID:   ", 1, 32, FIELDTYPE_INT);
-        pForm->addField("Email:        ", 1, 32);
-        pForm->addField("Major:        ", 1, 32);
-        pForm->addField("Year Standing:", 1, 2, FIELDTYPE_INT);
-        int range[] = {0, 1, 12};// TODO: Investigate why float validation is broken on OS X
-        pForm->addField("CGPA:", 1, 4, 20, 10, FIELDTYPE_FLOAT, range, 3);
-        pForm->addField("Major GPA:", 1, 4, 32, 10, FIELDTYPE_FLOAT, range, 3);
-        
-        //Show dialog
-        if (pForm->show() != STATE_SUCCESS) {
-            delete pForm;
-            return 0;
-        }
-        
-        //Get result
-        std::string *data = 0;
-        if (pForm->getFormData(&data)) {
-            //Save student
-            m_pActiveUser = new Student(data[0],
-                                       data[1],
-                                       data[2],
-                                       data[3],
-                                       data[4],
-                                       atoi(data[5].data()),
-                                       atof(data[6].data()),
-                                       atof(data[7].data()));
-            m_pActiveUser->saveToFile();
-            Database::instance()->addStudent(m_pActiveUser);
-        }
-        delete pForm;
-    }
-    return m_pActiveUser;
-}
-
 //Static methods
 
 CuTAES* CuTAES::instance() {
@@ -99,7 +61,8 @@ int main(int argc, const char* argv[]) {
     if (argc == 2) {
         CuTAES::instance()->setWorkingDirectory(argv[1]); //Init working directory
     }
-    MenuStartScreen::instance()->show();
+    Database::instance();
+    MenuStartScreen::instance()->show();    
     
     return 0;
 }

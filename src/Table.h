@@ -8,7 +8,7 @@ class ListBox;
 
 class Table : public Component {
 public:
-    Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths, std::string* labels);
+    Table(Panel *pPanel, int x, int y, int numRows, int numCols, int *colWidths, std::string* labels, bool editable=true);
     virtual ~Table();
     
     virtual void draw();
@@ -21,8 +21,6 @@ public:
     
     bool getDataInRow(int row, std::string **pData);
     void addRow(std::string *pData);
-    
-    void setEditable(bool b) {setSelectable(b);}
     
 private:
     int m_numCols;

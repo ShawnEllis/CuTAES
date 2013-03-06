@@ -1,0 +1,62 @@
+Start CuTAES
+Loading students...
+Loading student ./data/student/100851846.txt
+Loaded student 100851846
+Loading student ./data/student/100888111.txt
+Loaded student 100888111
+Loading student ./data/student/100888888.txt
+Loaded student 100888888
+Loading student ./data/student/100000000.txt
+Loaded student 100000000
+Loading student ./data/student/100888555.txt
+Loaded student 100888555
+Loading student ./data/student/100101010.txt
+Loaded student 100101010
+Loading student ./data/student/100123456.txt
+Loaded student 100123456
+Loading student ./data/student/100100100.txt
+Loaded student 100100100
+Loading student ./data/student/
+Loaded student 
+Loaded students.
+Loading applications...
+Loading application ./data/application/app_COMP1405_1360939536.txt
+Loaded application COMP1405 100851846
+Loading application ./data/application/app_COMP1405_1360939732.txt
+Loaded application COMP1405 100888555
+Loading application ./data/application/app_COMP1406_1360940003.txt
+Loaded application COMP1406 100851846
+Loading application ./data/application/app_COMP2401_1360940038.txt
+Loaded application COMP2401 100851846
+Loading application ./data/application/app_COMP1405_1360940469.txt
+Loaded application COMP1405 100101010
+Loading application ./data/application/app_COMP1406_1360940878.txt
+Loaded application COMP1406 100123456
+Loading application ./data/application/app_COMP2401_1360941546.txt
+Loaded application COMP2401 100100100
+Loading application ./data/application/app_COMP1406_1360941621.txt
+Loaded application COMP1406 100100100
+Loading application ./data/application/
+Loaded application  
+Loaded applications.
+Show panel CuTAES- Carleton University TA Application & Enrollment System
+Show panel Student: Select an Action
+Show panel Create Application: Select a Course
+Show panel Enter Student Info
+Form Enter Student Info data: 
+   0a
+   1a
+   21
+   31
+   41
+   51
+   61
+   71
+Student: Saving to ./data/student/1.txt
+Student: Saved.
+Show panel Create COMP1405 Application: Enter Course Info
+Show panel Create COMP1405 Application: Enter Work Experience
+Show panel Apply for another course?
+Show panel Administrator: Select an Action
+Show panel Create Application: Select a Course
+Show panel COMP1405: Pending Applications

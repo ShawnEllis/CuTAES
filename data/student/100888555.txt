@@ -1,0 +1,8 @@
+Fake
+Student
+100888555
+fake@fake.com
+Computer Science
+2
+10
+10

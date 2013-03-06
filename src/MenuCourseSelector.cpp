@@ -45,7 +45,7 @@ bool MenuCourseSelector::handleKeyPress(int key) {
    if (key == KEY_LEFT) {
         //Select back button
         m_pSelNode->data->setSelected(false);
-        m_pSelNode = (m_pSelNode->pPrev == 0) ? m_selectableList.last() : m_selectableList.first();
+        m_pSelNode = (m_pSelNode->pPrev == 0) ? m_pSelectableList->last() : m_pSelectableList->first();
         m_pSelNode->data->setSelected(true);
         draw();
         return true;

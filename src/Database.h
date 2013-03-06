@@ -21,11 +21,13 @@ class Database {
 public:
     virtual ~Database();
     
-    void addStudent(Student *pStudent);
-    void addApplication(TaApplication *pApplication);
+    void addStudent(Student *pStudent, bool save=true);
+    void addApplication(TaApplication *pApplication, bool save=true);
     
     Student* getStudent(const std::string& stuID);
-    Queue<TaApplication*>* findQueueForCourse(const std::string& str);
+    Queue<TaApplication*>* getApplications(const std::string& str);
+    
+    void replaceStudent(Student *pExisting, Student *pNew);
     
     static Database *instance();
     
@@ -36,7 +38,9 @@ private:
     Queue<Queue<TaApplication*>*>* m_pApplicationQueue;
     
     void loadStudents();
+    void loadStudent(const std::string &filename);
     void loadApplications();
+    void loadApplication(const std::string &filename);
     
     static Database *m_pInstance;
 };

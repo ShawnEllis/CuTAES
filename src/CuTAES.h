@@ -7,8 +7,13 @@
  *  info such as screen size, file directory, current user, etc.
  *
  *  TODO: Switch m_workingDirectory before submitting file
- *  TODO: Fix TaApplication saving bug where supervisor field of TA'd courses isn't saved
+ *  TODO: Fix TaApplication saving bug where selected field of selected table isn't saved (f1 key clears it?)
  *  TODO: Free memory
+ *  TODO: Validation on create app.
+ *  TODO: One app per course per student
+ *  TODO: Design doc
+ *  TODO: Row deletion (list, table)
+ *  TODO: Fix sorting
  *
  */
 
@@ -29,7 +34,8 @@ public:
     const std::string& getWorkingDirectory() {return m_workingDirectory;}
     const std::string getDataDirectory() {return m_workingDirectory + "data/";}
     
-    Student *getActiveUser();
+    Student *getActiveUser() {return m_pActiveUser;}
+    void setActiveUser(Student *pStu) {m_pActiveUser = pStu;}
     
     int main(int argc, const char* argv[]);
     static void onExit();

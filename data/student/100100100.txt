@@ -1,0 +1,8 @@
+New
+Student
+100100100
+new@student.com
+Computer Science
+2
+6
+7

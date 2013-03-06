@@ -1,67 +1,252 @@
 #include "MenuViewSummary.h"
+#include <fstream>
+#include <iostream>
+
 #include "CuTAES.h"
 #include "Label.h"
 #include "Table.h"
+#include "DialogYesNo.h"
+
+#include "StringUtil.h"
+#include "Database.h"
 #include "Queue.h"
 #include "TaApplication.h"
 #include "Student.h"
-#include "Database.h"
+#include "UndergradStudent.h"
+#include "GradStudent.h"
 
-MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course) : Panel(title, 143, 25) {
+#ifdef DEBUG
+extern std::ofstream dout;
+#endif //DEBUG
+
+std::string UNDERGRAD_LABELS[] = {"Student ID", "First", "Last", "Email", "Major", "Year Standing", "CGPA", "Major GPA"};
+int UNDERGRAD_COL_WIDTHS[]     = {10, 16, 16, 32, 32, 13, 4, 9};
+std::string GRAD_LABELS[]      = {"Student ID", "First", "Last", "Email", "Research Area", "Supervisor", "Program"};
+int GRAD_COL_WIDTHS[]          = {10, 16, 16, 32, 32, 20, 7};
+
+MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course) : Panel(title, 143, 25), m_course(course) {
     setReturnState(STATE_ERROR);
-
-    //Create table
-    std::string labels[] = {"Student ID", "First", "Last", "Email", "Major", "Year Standing", "Major GPA", "CGPA"};
-    int colWidths[] = {10, 16, 16, 32, 32, 13, 9, 4};
-    Table *pTable = new Table(this, 1, 3, 10, 8, colWidths, labels);
-    pTable->setEditable(false);
     
-    //Insert data
-    Queue<TaApplication*>* pApplications = Database::instance()->findQueueForCourse(course);
-    if (pApplications != 0) {
-        
-        Node<TaApplication*>* pCur = pApplications->front();
-        std::string *data = 0;
-        TaApplication *pApplication = 0;
-        Student *pStudent = 0;
-        while (pCur != 0) {
-            pApplication = pCur->value;
-            if (pApplication != 0) {
-                pStudent = Database::instance()->getStudent(pApplication->getStudentID());
-                if (pStudent != 0) {
-                    data = new std::string[8];
-                    data[0] = pApplication->getStudentID();
-                    data[1] = pStudent->getFirstName();
-                    data[2] = pStudent->getLastName();
-                    data[3] = pStudent->getEmail();
-                    data[4] = pStudent->getMajor();
-                    data[5] = pStudent->getYearStanding(); //TODO: convert to string
-                    data[6] = pStudent->getMajorGPA();
-                    data[7] = pStudent->getCGPA();
-                    //TODO: sort by GPA
-                    pTable->addRow(data);
-                }
+    m_panelY = getY();
+//    scrollok(m_pWindow, true);
+
+    //Get applications
+    Queue<UndergradStudent*>* pUndergrads = 0;
+    Queue<GradStudent*>* pGrads = 0;
+    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    
+    Table *pTable = createTable(sortByGPA(pUndergrads), pUndergrads->getSize(), 3, true);
+    createTable(sortByResearchArea(pGrads), pGrads->getSize(), pTable->getY() + pTable->getHeight(), false);
+    
+    add(new Label(this, "Enter: Back", 1, getHeight() - 2));
+    add(new Label(this, "Save Summary: F5", getWidth() - 17, getHeight() - 2));
+}
+
+MenuViewSummary::~MenuViewSummary() {
+    //TODO: free mem
+}
+
+/*
+ * Creates a table for the given applications.
+ * @param y: initial yPos of the table
+ * @return: A list of applications that were not added, because the table went off screen TODO: this
+ */
+Table* MenuViewSummary::createTable(Student **pStudents, int numStudents, int y, bool isUndergrad) {
+    if (pStudents == 0 || numStudents == 0) {
+        return  0;
+    }
+    
+    //Create table
+    Table* pTable;
+    if (isUndergrad) {
+        pTable = new Table(this, 1, y, numStudents + 4, 8, UNDERGRAD_COL_WIDTHS, UNDERGRAD_LABELS, false);
+    } else {
+        pTable = new Table(this, 1, y, numStudents + 4, 7, GRAD_COL_WIDTHS, GRAD_LABELS, false);
+    }
+    
+    std::string *data = 0;
+    Student *pCurStudent = 0;
+    for (int i = 0; i < numStudents; i++) {
+        pCurStudent = pStudents[i];
+        if (pCurStudent != 0) {
+            data = isUndergrad ? new std::string[8] : new std::string[7];
+            data[0] = pCurStudent->getStudentID();
+            data[1] = pCurStudent->getFirstName();
+            data[2] = pCurStudent->getLastName();
+            data[3] = pCurStudent->getEmail();
+            if (pCurStudent->getType() == TYPE_UNDERGRAD) {
+                UndergradStudent* pTmp = (UndergradStudent*)pCurStudent;
+                data[4] = pTmp->getMajor();
+                data[5] = StringUtil::itos(pTmp->getYearStanding());
+                data[6] = StringUtil::ftos(pTmp->getCGPA());
+                data[7] = StringUtil::ftos(pTmp->getMajorGPA());
+            } else if (pCurStudent->getType() == TYPE_GRAD) {
+                GradStudent* pTmp = (GradStudent*)pCurStudent;
+                data[4] = pTmp->getResearchArea();
+                data[5] = pTmp->getSupervisor();
+                data[6] = pTmp->getProgram();
             }
-            pCur = pCur->m_pNext;
+            pTable->addRow(data);
         }
     }
     
     add(pTable);
     
-    add(new Label(this, "Enter: Back", 1, getHeight() - 2));
+    return pTable;
 }
 
-MenuViewSummary::~MenuViewSummary() {
+void MenuViewSummary::getApplicantsByType(Queue<TaApplication *>* pQueue, Queue<UndergradStudent*>** r_pUndergrads, Queue<GradStudent*>** r_pGrads) {
+    if (pQueue == 0 || r_pUndergrads == 0 || *r_pUndergrads != 0 || r_pGrads == 0 || *r_pGrads != 0) {
+        return;
+    }
+    Queue<UndergradStudent*>* pUndergrads = new Queue<UndergradStudent*>();
+    Queue<GradStudent*>* pGrads = new Queue<GradStudent*>();
     
+    Node <TaApplication*>* pCur = pQueue->front();
+    Student* pStudent = 0;
+    while (pCur != 0) {
+        if (pCur->value != 0) {
+            pStudent = Database::instance()->getStudent(pCur->value->getStudentID());
+            if (pStudent != 0) {
+                if (pStudent->getType() == TYPE_UNDERGRAD) {
+                    pUndergrads->pushBack((UndergradStudent*)pStudent);
+                } else {
+                    pGrads->pushBack((GradStudent*)pStudent);
+                }
+            }
+        }
+        pCur = pCur->m_pNext;
+    }
+    
+    *r_pUndergrads = pUndergrads;
+    *r_pGrads = pGrads;
 }
+
+
 
 /*
- Handle left and right movement
+ *  Sorts a queue of undergrads by GPA, returns a sorted array of undergrads
  */
+Student** MenuViewSummary::sortByGPA(Queue<UndergradStudent*>* pQueue) {
+    if (pQueue == 0) {
+        return 0;
+    }
+    Student** pSorted = new Student*[pQueue->getSize()];
+    UndergradStudent *pLastAdded = 0, *pBestSoFar = 0;
+    Node<UndergradStudent*>* pCur = 0;
+    for (int i = 0; i < pQueue->getSize(); i++) {
+        //Find best
+        pCur = pQueue->front();
+        while (pCur != 0) {
+            if (pLastAdded != 0 &&
+                (pCur->value->getStudentID() == pLastAdded->getStudentID() ||
+                 pCur->value->getMajorGPA() > pLastAdded->getMajorGPA())) {
+                    //We have added this node already, skip
+                    pCur = pCur->m_pNext;
+                    continue;
+            }
+            if (pBestSoFar == 0 || pCur->value->getMajorGPA() > pBestSoFar->getMajorGPA()) {
+                pBestSoFar = pCur->value;
+            }
+            pCur = pCur->m_pNext;
+        }
+        pSorted[i] = pBestSoFar;
+        pLastAdded = pBestSoFar;
+        pBestSoFar = 0;
+    }
+    return pSorted;
+}
+
+Student** MenuViewSummary::sortByResearchArea(Queue<GradStudent *>* pQueue) {
+    if (pQueue == 0) {
+        return 0;
+    }
+    Student **pSorted = new Student*[pQueue->getSize()];
+    GradStudent *pLastAdded = 0, *pBestSoFar = 0;
+    Node<GradStudent*>* pCur = 0;
+    for (int i = 0; i < pQueue->getSize(); i++) {
+        //Find next student alphabetically
+        pCur = pQueue->front();
+        while (pCur != 0) {
+            if (pLastAdded != 0 &&
+                (pCur->value->getStudentID() == pLastAdded->getStudentID() ||
+                 pCur->value->getResearchArea().compare(pLastAdded->getResearchArea()) < 0)) {
+                    //We have added this node already, skip
+                    pCur = pCur->m_pNext;
+                    continue;
+            }
+            if (pBestSoFar == 0 || pCur->value->getResearchArea().compare(pBestSoFar->getResearchArea()) < 0) {
+                pBestSoFar = pCur->value;
+            }
+            pCur = pCur->m_pNext;
+        }
+        pSorted[i] = pBestSoFar;
+        pLastAdded = pBestSoFar;
+        pBestSoFar = 0;
+    }
+    return pSorted;
+}
+
 bool MenuViewSummary::handleKeyPress(int key) {
     if (key == CuTAES::KEY_ENT) {
         hide();
         return true;
-    }
+    } else if (key == KEY_F(5)) {
+        //Save summary
+        std::string filename = CuTAES::instance()->getDataDirectory() + "Summary_" + m_course + "_Pending.txt";
+        char* scrData = new char[getWidth() * getHeight() + 256];
+        mvinstr(0, 0, scrData);
+        std::ofstream file;
+        file.open(filename.data());
+#ifdef DEBUG
+        dout << "Saving summary for" << m_course << " to " << filename << std::endl;
+#endif //DEBUG
+        if (file.is_open()) {
+            /*
+            file << "--Summary of Pending Applications for " << m_course << "--" << std::endl << std::endl;
+            file << '|' << "Student ID" << '|';
+            file << StringUtil::pad("First Name", 16) << '|';
+            file << StringUtil::pad("Last Name", 16) << '|';
+            file << StringUtil::pad("Email", 32) << '|';
+            file << StringUtil::pad("Major", 32) << '|';
+            file << "Year Standing" << '|';
+            file << "CGPA" << '|';
+            file << "Major GPA" << '|'  << std::endl;
+            std::string* data = 0;
+            for (int i = 0; i < m_pTable->getNumRows(); i++) {
+                m_pTable->getDataInRow(i, &data);
+                file << '|' <<  StringUtil::pad(data[0], 10) << '|';
+                file << StringUtil::pad(data[1], 16) << '|';
+                file << StringUtil::pad(data[2], 16) << '|';
+                file << StringUtil::pad(data[3], 32) << '|';
+                file << StringUtil::pad(data[4], 32) << '|';
+                file << StringUtil::pad(data[5], 13) << '|';
+                file << StringUtil::pad(data[6], 4) << '|';
+                file << StringUtil::pad(data[7], 9) << '|' << std::endl;
+                data = 0;
+            }
+             */
+            for (int i = 0; i < getWidth() * getHeight() + 256; i++) {
+                if (i == 0) {
+//                    break;
+                }
+                file << scrData[i];
+            }
+            DialogYesNo *pDia = new DialogYesNo("Summary saved successfully.", DIALOG_MESSAGE);
+            pDia->show();
+            delete pDia;
+            file.close();
+        }
+    }/* else if (key == KEY_UP) {
+//        wscrl(m_pWindow, -1);
+        wmove(m_pWindow, 0, 0);
+        winsertln(m_pWindow);
+        wrefresh(m_pWindow);
+        update_panels();
+    } else if (key == KEY_DOWN) {
+        scroll(m_pWindow);
+        wrefresh(m_pWindow);
+        update_panels();
+    }*/
     return false;
 }

@@ -3,18 +3,24 @@
 #include <string>
 #include "Button.h"
 
-DialogYesNo::DialogYesNo(const std::string& msg) : Panel(msg, std::max(20, (int)msg.size() + 2), 7) {
+DialogYesNo::DialogYesNo(const std::string& msg, DialogType type) : Panel(msg, std::max(20, (int)msg.size() + 2), 7) {
     setReturnState(STATE_ERROR); //Default return is error
-    
-    Button *pButton = new Button(this, "Yes", getWidth() / 2 + 6, getHeight() - 3, 0, 0);
-    pButton->setEventHandler(handleYesPressed);
-    pButton->setUsrPtr(this);
-    add(pButton);
-    
-    pButton = new Button(this, "No", getWidth() / 2 - 6, getHeight() - 3, 0, 0);
-    pButton->setEventHandler(handleNoPressed);
-    pButton->setUsrPtr(this);
-    add(pButton);
+    if (type == DIALOG_YESNO) {
+        Button *pButton = new Button(this, "Yes", getWidth() / 2 + 6, getHeight() - 3, 0, 0);
+        pButton->setEventHandler(handleYesPressed);
+        pButton->setUsrPtr(this);
+        add(pButton);
+        
+        pButton = new Button(this, "No", getWidth() / 2 - 6, getHeight() - 3, 0, 0);
+        pButton->setEventHandler(handleNoPressed);
+        pButton->setUsrPtr(this);
+        add(pButton);
+    } else {
+        Button *pButton = new Button(this, "Ok", getWidth() / 2 - 2, getHeight() - 3, 0, 0);
+        pButton->setEventHandler(handleYesPressed);
+        pButton->setUsrPtr(this);
+        add(pButton);        
+    }
 }
 
 DialogYesNo::~DialogYesNo() {

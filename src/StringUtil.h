@@ -1,3 +1,4 @@
+#include <sstream>
 #include <string>
 
 class StringUtil {
@@ -15,6 +16,26 @@ public:
             }
         }
         return count;
+    }
+    
+    static std::string pad(const std::string& str, int l) {
+        if (str.size() >= l) {
+            return str;
+        }
+        std::string str2(l - str.size(), ' ');
+        return str + str2;
+    }
+    
+    static std::string itos(int i) {
+        std::stringstream ss;
+        ss << i;
+        return ss.str();
+    }
+    
+    static std::string ftos(float f) {
+        std::stringstream ss;
+        ss << f;
+        return ss.str();
     }
 
 };

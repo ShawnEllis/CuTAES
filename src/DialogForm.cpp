@@ -1,4 +1,5 @@
 #include "DialogForm.h"
+#include <sstream>
 
 #include "Component.h"
 #include "ListNode.h"
@@ -83,7 +84,7 @@ void DialogForm::draw() {
     //Draw cancel / ok commands
     
     mvwprintw(m_pWindow, m_rows + 4, 1, "Cancel: F3");
-	mvwprintw(m_pWindow, m_rows + 4, m_cols - 9, "Continue: F1");
+	mvwprintw(m_pWindow, m_rows + 4, m_cols - 9, "Continue: F2");
  
     form_driver(m_pForm, REQ_FIRST_FIELD);
     form_driver(m_pForm, REQ_END_LINE);
@@ -134,7 +135,7 @@ bool DialogForm::handleKeyPress(int key) {
         //Delete prev. char
         form_driver(m_pForm, REQ_DEL_PREV);
     }
-    else if (key == KEY_F(1)) {
+    else if (key == KEY_F(2)) {
         if (isDataValid()) {
             setReturnState(STATE_SUCCESS);
             hide();
@@ -195,6 +196,18 @@ bool DialogForm::getFormData(std::string **pData) {
 
 void DialogForm::addField(const std::string &label, int rows, int cols, int type, int *typeParams, int nParams) {
     addField(label, rows, cols, 0, m_curField * 2, type, typeParams, nParams);
+}
+
+void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, int type, int *typeParams, int nParams) {
+    std::stringstream ss;
+    ss << label << "|" << txt;
+    addField(ss.str(), rows, cols, 0, m_curField * 2, type, typeParams, nParams);
+}
+
+void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {
+    std::stringstream ss;
+    ss << label << "|" << txt;
+    addField(ss.str(), rows, cols, x, y, type, typeParams, nParams, pField);
 }
 
 /*
@@ -268,22 +281,4 @@ void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int
     }
     
     m_curField++;
-}
-
-void DialogForm::addList(const std::string &label, int width, int height, int x, int y) {
-    //Create the list
-    ListBox *pList = new ListBox(this, x + 1, y + 4, width, height);
-    add(pList);
-    m_rows = std::max(m_rows, height + y);
-    m_cols = std::max(m_cols, width + x);
-    
-    //Create dummy field for selection
-    FIELD *pField;
-    addField("", 1, 1, x, y, 0, 0, 0, &pField);
-//    set_field_userptr(pField, (void*)(pList));
-    //TODO: Set user pointer to listBox. This will be used for navigation.
-    
-    //Create the label
-    Label* pLabel = new Label(this, label, x + 1, y + 3);
-    add(pLabel);
 }

@@ -1,0 +1,5 @@
+--Summary of Pending Applications for COMP1405--
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+|100851846 |Zack            |Dawson          |email@address.com               |Computer Science                |2            |11.5|10.5     |
+|100888555 |Fake            |Student         |fake@fake.com                   |Computer Science                |2            |10  |10       |

@@ -5,8 +5,8 @@
 #include "ListBox.h"
 #include "WindowUtil.h"
 
-Table::Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths, std::string* labels) : Component(pPanel, x, y, 1, colH + 2), m_numCols(numCols) {
-    setSelectable(true);
+Table::Table(Panel *pPanel, int x, int y, int numRows, int numCols, int *colWidths, std::string* labels, bool editable) : Component(pPanel, x, y, 1, numRows + 2), m_numCols(numCols) {
+    setSelectable(editable);
     m_pLists = new ListBox*[numCols];
     m_curList = 0;
     
@@ -21,7 +21,7 @@ Table::Table(Panel *pPanel, int x, int y, int colH, int numCols, int *colWidths,
     
     w = 0;
     for (int i = 0; i < numCols; i++) {
-        m_pLists[i] = new ListBox(pPanel, x + w, y + 2, colWidths[i] + 2, colH);
+        m_pLists[i] = new ListBox(pPanel, x + w, y + 2, colWidths[i] + 2, numRows);
         pPanel->add(new Label(pPanel, labels[i], x + w + 1, y + 1));
         w += m_colWidths[i] + 1;
     }
@@ -63,13 +63,15 @@ bool Table::handleKeyPress(int key) {
         m_pLists[m_curList]->setCurRow(r);
         return true;
     } else if (key == KEY_BACKSPACE) {
-        for (int i = 0; i < m_numCols; i++) {
-            m_pLists[i]->setSelected(true);
-        }
-        if (getch() == KEY_BACKSPACE) {
-            //Delete row
-        }
-        return true;
+//        for (int i = 0; i < m_numCols; i++) {
+//            m_pLists[i]->setSelected(true);
+//        }
+//        if (getch() == KEY_BACKSPACE) {
+//            //Delete row
+//        }
+//        return true;
+    } else if (key == KEY_F(2)) {
+        return false;
     } else {
         int numRows = m_pLists[m_curList]->getNumRows();
         bool b = m_pLists[m_curList]->handleKeyPress(key);
@@ -82,6 +84,7 @@ bool Table::handleKeyPress(int key) {
         }
         return b;
     }
+    return false;
 }
 
 void Table::setSelected(bool sel) {

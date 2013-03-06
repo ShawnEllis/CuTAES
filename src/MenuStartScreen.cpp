@@ -21,15 +21,19 @@ MenuStartScreen* MenuStartScreen::instance() {
 
 MenuStartScreen::MenuStartScreen() : Panel("CuTAES- Carleton University TA Application & Enrollment System") {
     //Create buttons
-    Button *pButton = new Button(this, "Students", getWidth() / 2, getHeight() / 2 - 6);
-    pButton->setEventHandler(handleStudentPressed);
+    Button *pButton = new Button(this, "Undergrads", getWidth() / 2, getHeight() / 2 - 7, 5);
+    pButton->setEventHandler(handleUndergradPressed);
     this->add(pButton);
     
-    pButton = new Button(this, "Administrators", getWidth() / 2, pButton->getY() + pButton->getHeight() + 3, 3);
+    pButton = new Button(this, "Grad Students ", getWidth() / 2, pButton->getY() + pButton->getHeight() + 2, 3);
+    pButton->setEventHandler(handleGradPressed);
+    this->add(pButton);
+    
+    pButton = new Button(this, "Administrators", getWidth() / 2, pButton->getY() + pButton->getHeight() + 2, 3);
     pButton->setEventHandler(handleAdminPressed);
     this->add(pButton);
     
-    pButton = new Button(this, "Exit", getWidth() / 2, pButton->getY() + pButton->getHeight() + 3);
+    pButton = new Button(this, "Exit", getWidth() / 2, pButton->getY() + pButton->getHeight() + 2);
     pButton->setEventHandler(handleExitPressed);
     this->add(pButton);
 }
@@ -43,9 +47,19 @@ void MenuStartScreen::handleExitPressed(Button *pButton) {
     MenuStartScreen::instance()->hide();
 }
 
-void MenuStartScreen::handleStudentPressed(Button *pButton) {
+void MenuStartScreen::handleUndergradPressed(Button *pButton) {
     MenuStartScreen::instance()->erase();
-    MenuStartStudent::instance()->show();
+    MenuStartStudent *pMenu = new MenuStartStudent(true);
+    pMenu->show();
+    delete pMenu;
+    MenuStartScreen::instance()->draw();
+}
+
+void MenuStartScreen::handleGradPressed(Button *pButton) {
+    MenuStartScreen::instance()->erase();
+    MenuStartStudent *pMenu = new MenuStartStudent(false);
+    pMenu->show();
+    delete pMenu;
     MenuStartScreen::instance()->draw();
 }
 

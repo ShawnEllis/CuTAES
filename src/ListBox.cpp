@@ -80,7 +80,6 @@ bool ListBox::handleKeyPress(int key) {
 }
 
 std::string ListBox::getDataAt(int r) {
-    //Validate cur field
     form_driver(m_pForm, REQ_VALIDATION);
     std::string data = field_buffer(m_pFields[r], 0);
     StringUtil::trimEnd(data);

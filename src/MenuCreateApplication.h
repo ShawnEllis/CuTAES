@@ -6,6 +6,7 @@
 
 class Table;
 class TaApplication;
+class MenuWorkExperience;
 
 class MenuCreateApplication : public Panel {
 public:
@@ -22,6 +23,7 @@ private:
     
     Table *pRelatedCoursesTable, *pTaCoursesTable;
     
+    MenuWorkExperience *m_pWorkExperienceMenu;
 };
 
 #endif //MENUCREATE_APPLICATION_H

@@ -17,8 +17,8 @@ Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h
     m_pSelNode = 0;
     m_returnState = STATE_VOID;
     
-    m_componentList = *(new List<Component*>());
-    m_selectableList = *(new List<Component*>());
+    m_pComponentList = new List<Component*>();
+    m_pSelectableList = new List<Component*>();
     
     getmaxyx(stdscr, m_termHeight, m_termWidth); //Used to determine when to re-center panel
     
@@ -28,8 +28,10 @@ Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h
 }
 
 Panel::~Panel() {
-    delwin(m_pWindow);
-    //TODO: Free components
+//    delwin(m_pWindow);
+//    m_pComponentList->clear<Component*>();
+//    delete m_pComponentList;
+//    delete m_pSelectableList;
 }
 
 StateType Panel::show() {
@@ -77,7 +79,7 @@ void Panel::draw() {
  * Iterate through componentList and draw components
  */
 void Panel::drawComponents() {
-    ListNode<Component*>* cur = m_componentList.first();
+    ListNode<Component*>* cur = m_pComponentList->first();
     while (cur != 0) {
         cur->data->draw();
         cur = cur->pNext;
@@ -95,17 +97,17 @@ void Panel::waitForInput() {
         if (handleKeyPress(ch)) {
             continue;
         }
-        if (m_selectableList.getSize() > 1) {
+        if (m_pSelectableList->getSize() > 1) {
             if (ch == KEY_UP || ch == KEY_LEFT) {
                 //Select prev item
                 m_pSelNode->data->setSelected(false);
-                m_pSelNode = (m_pSelNode->pPrev != 0) ? m_pSelNode->pPrev : m_selectableList.last();
+                m_pSelNode = (m_pSelNode->pPrev != 0) ? m_pSelNode->pPrev : m_pSelectableList->last();
                 m_pSelNode->data->setSelected(true);
                 draw();
             } else if (ch == KEY_DOWN || ch == KEY_RIGHT) {
                 //Select next item
                 m_pSelNode->data->setSelected(false);
-                m_pSelNode = (m_pSelNode->pNext != 0) ? m_pSelNode->pNext : m_selectableList.first();
+                m_pSelNode = (m_pSelNode->pNext != 0) ? m_pSelNode->pNext : m_pSelectableList->first();
                 m_pSelNode->data->setSelected(true);
                 draw();
             }
@@ -114,11 +116,11 @@ void Panel::waitForInput() {
 }
 
 void Panel::add(Component *c) {
-    m_componentList.addBack(c);
+    m_pComponentList->addBack(c);
     if (c->isSelectable()) {
-        m_selectableList.addBack(c);
+        m_pSelectableList->addBack(c);
         if (m_pSelNode == 0) {
-            m_pSelNode = m_selectableList.first();
+            m_pSelNode = m_pSelectableList->first();
             m_pSelNode->data->setSelected(true);
         }
     }

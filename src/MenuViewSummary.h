@@ -11,12 +11,31 @@
 
 #include "Panel.h"
 
+template <class T>
+class Queue;
+class TaApplication;
+class Table;
+class UndergradStudent;
+class GradStudent;
+
 class MenuViewSummary : public Panel {
 public:
     MenuViewSummary(const std::string& title, const std::string& course);
     virtual ~MenuViewSummary();
     
     virtual bool handleKeyPress(int key);
+    
+private:
+    Table* createTable(Student**, int count, int y, bool isUndergrad);
+    
+    void getApplicantsByType(Queue<TaApplication*>* pQueue, Queue<UndergradStudent*>**, Queue<GradStudent*>**);
+    
+    Student** sortByGPA(Queue<UndergradStudent*>* pQueue);
+    Student** sortByResearchArea(Queue<GradStudent*>* pQueue);
+    
+    int m_panelY;
+    
+    const std::string& m_course;
 };
 
 #endif //MENU_VIEW_SUMMARY_H

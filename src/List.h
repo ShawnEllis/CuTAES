@@ -6,8 +6,15 @@
 template <class T>
 class List {
 public:
-    List() {pFirst = 0; pLast = 0; m_size = 0;}
-    virtual ~List() {}
+    List() {
+        pFirst = 0;
+        pLast = 0;
+        m_size = 0;
+    }
+    
+    virtual ~List() {
+        clear();
+    }
 
     void addFront(T data) {
         ListNode<T> *node = new ListNode<T>(data);
@@ -33,6 +40,34 @@ public:
             pFirst = node;
         }
         m_size++;
+    }
+    
+    template <class C>
+    void clear() {
+        ListNode<C> *pCur = pFirst;
+        ListNode<C> *pTmp;
+        while (pCur != 0) {
+            pTmp = pCur->pNext;
+            delete pCur->data;
+            delete pCur;
+            pCur = pTmp;
+        }
+        m_size = 0;
+        pFirst = 0;
+        pLast = 0;
+    }
+    
+    void clear() {
+        ListNode<T> *pCur = pFirst;
+        ListNode<T> *pTmp;
+        while (pCur != 0) {
+            pTmp = pCur->pNext;
+            delete pCur;
+            pCur = pTmp;
+        }
+        m_size = 0;
+        pFirst = 0;
+        pLast = 0;
     }
 
     ListNode<T>* first() {

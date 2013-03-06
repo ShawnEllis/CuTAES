@@ -12,9 +12,14 @@
 
 class Button;
 
+enum DialogType {
+    DIALOG_YESNO,
+    DIALOG_MESSAGE
+};
+
 class DialogYesNo : public Panel {
 public:
-    DialogYesNo(const std::string& m_msg);
+    DialogYesNo(const std::string& m_msg, DialogType type=DIALOG_YESNO);
     virtual ~DialogYesNo();
     
     static void handleNoPressed(Button * pButton);

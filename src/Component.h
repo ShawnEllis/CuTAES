@@ -10,7 +10,6 @@ public:
     
     /*
      * Create a new component using pPanel for rendering & events
-     * TODO: Remove panel arg
      */
     Component(Panel *pPanel, int x=0, int y=0, int w=1, int h=1);
     
