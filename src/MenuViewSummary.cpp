@@ -29,7 +29,6 @@ MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& co
     setReturnState(STATE_ERROR);
     
     m_panelY = getY();
-//    scrollok(m_pWindow, true);
 
     int y = 3;
     if (course.compare("All Courses") == 0) {
@@ -39,7 +38,7 @@ MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& co
         for (int i = 0; i < count; i++) {
             add(new Label(this, courses[i], getWidth() / 2 - 4, y + 1));
             y += 3;
-            y = createTablesForCourse("COMP1405"/*courses[i]*/, y);
+            y = createTablesForCourse(courses[i], y);
         }
     } else {
         y = createTablesForCourse(course, y);
@@ -49,9 +48,9 @@ MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& co
     
     int termWidth, termHeight;
     getmaxyx(stdscr, termHeight, termWidth);
-    add(new Label(this, "Up/Down: Scroll", 1, termHeight - 2, true));
-    add(new Label(this, "Enter: Back", 1, termHeight - 1, true));
-    add(new Label(this, "Save Summary: F5", termWidth - 17, termHeight - 1, true));
+    add(new Label(this, "Up/Down: Scroll", 0, termHeight - 2, true));
+    add(new Label(this, "Enter: Back", 0, termHeight - 1, true));
+    add(new Label(this, "Save Summary: F5", termWidth - 16, termHeight - 1, true));
 }
 
 MenuViewSummary::~MenuViewSummary() {
@@ -236,36 +235,20 @@ bool MenuViewSummary::handleKeyPress(int key) {
         dout << "Saving summary for" << m_course << " to " << filename << std::endl;
 #endif //DEBUG
         if (file.is_open()) {
-            /*
-            file << "--Summary of Pending Applications for " << m_course << "--" << std::endl << std::endl;
-            file << '|' << "Student ID" << '|';
-            file << StringUtil::pad("First Name", 16) << '|';
-            file << StringUtil::pad("Last Name", 16) << '|';
-            file << StringUtil::pad("Email", 32) << '|';
-            file << StringUtil::pad("Major", 32) << '|';
-            file << "Year Standing" << '|';
-            file << "CGPA" << '|';
-            file << "Major GPA" << '|'  << std::endl;
-            std::string* data = 0;
-            for (int i = 0; i < m_pTable->getNumRows(); i++) {
-                m_pTable->getDataInRow(i, &data);
-                file << '|' <<  StringUtil::pad(data[0], 10) << '|';
-                file << StringUtil::pad(data[1], 16) << '|';
-                file << StringUtil::pad(data[2], 16) << '|';
-                file << StringUtil::pad(data[3], 32) << '|';
-                file << StringUtil::pad(data[4], 32) << '|';
-                file << StringUtil::pad(data[5], 13) << '|';
-                file << StringUtil::pad(data[6], 4) << '|';
-                file << StringUtil::pad(data[7], 9) << '|' << std::endl;
-                data = 0;
-            }
-             */
-            for (int i = 0; i < getWidth() * getHeight() + 256; i++) {
-                if (i == 0) {
-//                    break;
+            file << "--Summary of Pending Applications for " << m_course << "--";
+            if (m_course.compare("All Courses") == 0) {
+                const std::string* courses;
+                int count;
+                Database::instance()->getCourses(&courses, count);
+                for (int i = 0; i < count; i++) {
+                    file << std::endl << std::endl << courses[i] << std::endl << std::endl;
+                    saveCourseData(courses[i], &file);
                 }
-                file << scrData[i];
+            } else {
+                file << std::endl << std::endl;
+                saveCourseData(m_course, &file);
             }
+            
             DialogYesNo *pDia = new DialogYesNo("Summary saved successfully.", DIALOG_MESSAGE);
             pDia->show();
             delete pDia;
@@ -283,4 +266,58 @@ bool MenuViewSummary::handleKeyPress(int key) {
         }
     }
     return false;
+}
+
+void MenuViewSummary::saveCourseData(const std::string &course, std::ofstream *file) {
+    Queue<UndergradStudent*>* pUndergrads = 0;
+    Queue<GradStudent*>* pGrads = 0;
+    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    if (pUndergrads != 0) {
+        *file << '|' << "Student ID" << '|';
+        *file << StringUtil::pad("First Name", 16) << '|';
+        *file << StringUtil::pad("Last Name", 16) << '|';
+        *file << StringUtil::pad("Email", 32) << '|';
+        *file << StringUtil::pad("Major", 32) << '|';
+        *file << "Year Standing" << '|';
+        *file << "CGPA" << '|';
+        *file << "Major GPA" << '|'  << std::endl;
+        std::string* data = 0;
+        Node<UndergradStudent*>* pCur = pUndergrads->front();
+        while (pCur != 0) {
+            pCur->value->getData(&data);
+            *file << '|' <<  StringUtil::pad(data[0], 10) << '|';
+            *file << StringUtil::pad(data[1], 16) << '|';
+            *file << StringUtil::pad(data[2], 16) << '|';
+            *file << StringUtil::pad(data[3], 32) << '|';
+            *file << StringUtil::pad(data[4], 32) << '|';
+            *file << StringUtil::pad(data[5], 13) << '|';
+            *file << StringUtil::pad(data[6], 4) << '|';
+            *file << StringUtil::pad(data[7], 9) << '|' << std::endl;
+            data = 0;
+            pCur = pCur->m_pNext;
+        }
+    }
+    if (pGrads != 0) {
+        *file << std::endl << '|' << "Student ID" << '|';
+        *file << StringUtil::pad("First Name", 16) << '|';
+        *file << StringUtil::pad("Last Name", 16) << '|';
+        *file << StringUtil::pad("Email", 32) << '|';
+        *file << StringUtil::pad("Research Area", 32) << '|';
+        *file << StringUtil::pad("Supervisor", 20) << '|';
+        *file << "Program" << '|' << std::endl;
+        std::string* data = 0;
+        Node<GradStudent*>* pCur = pGrads->front();
+        while (pCur != 0) {
+            pCur->value->getData(&data);
+            *file << '|' <<  StringUtil::pad(data[0], 10) << '|';
+            *file << StringUtil::pad(data[1], 16) << '|';
+            *file << StringUtil::pad(data[2], 16) << '|';
+            *file << StringUtil::pad(data[3], 32) << '|';
+            *file << StringUtil::pad(data[6], 32) << '|';
+            *file << StringUtil::pad(data[4], 20) << '|';
+            *file << StringUtil::pad(data[5], 7) << '|' << std::endl;
+            data = 0;
+            pCur = pCur->m_pNext;
+        }
+    }
 }
