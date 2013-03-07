@@ -6,6 +6,7 @@
 #include "Label.h"
 #include "Table.h"
 #include "DialogYesNo.h"
+#include "WindowUtil.h"
 
 #include "StringUtil.h"
 #include "Database.h"
@@ -19,31 +20,60 @@
 extern std::ofstream dout;
 #endif //DEBUG
 
-std::string UNDERGRAD_LABELS[] = {"Student ID", "First", "Last", "Email", "Major", "Year Standing", "CGPA", "Major GPA"};
-int UNDERGRAD_COL_WIDTHS[]     = {10, 16, 16, 32, 32, 13, 4, 9};
-std::string GRAD_LABELS[]      = {"Student ID", "First", "Last", "Email", "Research Area", "Supervisor", "Program"};
-int GRAD_COL_WIDTHS[]          = {10, 16, 16, 32, 32, 20, 7};
+static std::string UNDERGRAD_LABELS[] = {"Student ID", "First", "Last", "Email", "Major", "Year Standing", "CGPA", "Major GPA"};
+static int UNDERGRAD_COL_WIDTHS[]     = {10, 16, 16, 32, 32, 13, 4, 9};
+static std::string GRAD_LABELS[]      = {"Student ID", "First", "Last", "Email", "Research Area", "Supervisor", "Program"};
+static int GRAD_COL_WIDTHS[]          = {10, 16, 16, 32, 32, 20, 7};
 
-MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course) : Panel(title, 143, 25), m_course(course) {
+MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course) : Panel(title, 143, 1000), m_course(course) {
     setReturnState(STATE_ERROR);
     
     m_panelY = getY();
 //    scrollok(m_pWindow, true);
 
-    //Get applications
-    Queue<UndergradStudent*>* pUndergrads = 0;
-    Queue<GradStudent*>* pGrads = 0;
-    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    int y = 3;
+    if (course.compare("All Courses") == 0) {
+        const std::string* courses;
+        int count;
+        Database::instance()->getCourses(&courses, count);
+        for (int i = 0; i < count; i++) {
+            add(new Label(this, courses[i], getWidth() / 2 - 4, y + 1));
+            y += 3;
+            y = createTablesForCourse("COMP1405"/*courses[i]*/, y);
+        }
+    } else {
+        y = createTablesForCourse(course, y);
+    }
+    setHeight(y + 1);
+    drawComponents();
     
-    Table *pTable = createTable(sortByGPA(pUndergrads), pUndergrads->getSize(), 3, true);
-    createTable(sortByResearchArea(pGrads), pGrads->getSize(), pTable->getY() + pTable->getHeight(), false);
-    
-    add(new Label(this, "Enter: Back", 1, getHeight() - 2));
-    add(new Label(this, "Save Summary: F5", getWidth() - 17, getHeight() - 2));
+    int termWidth, termHeight;
+    getmaxyx(stdscr, termHeight, termWidth);
+    add(new Label(this, "Up/Down: Scroll", 1, termHeight - 2, true));
+    add(new Label(this, "Enter: Back", 1, termHeight - 1, true));
+    add(new Label(this, "Save Summary: F5", termWidth - 17, termHeight - 1, true));
 }
 
 MenuViewSummary::~MenuViewSummary() {
     //TODO: free mem
+}
+
+int MenuViewSummary::createTablesForCourse(const std::string &course, int y) {
+    //Get applications
+    Queue<UndergradStudent*>* pUndergrads = 0;
+    Queue<GradStudent*>* pGrads = 0;
+    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    //Create tables
+    Table *pTable = 0;
+    if (pUndergrads != 0) {
+        pTable = createTable(sortByGPA(pUndergrads), pUndergrads->getSize(), y, true);
+        y = pTable->getHeight() + pTable->getY();
+    }
+    if (pGrads != 0) {
+        pTable = createTable(sortByResearchArea(pGrads), pGrads->getSize(), y, false);
+        y = pTable->getHeight() + pTable->getY();
+    }
+    return y;
 }
 
 /*
@@ -237,16 +267,16 @@ bool MenuViewSummary::handleKeyPress(int key) {
             delete pDia;
             file.close();
         }
-    }/* else if (key == KEY_UP) {
-//        wscrl(m_pWindow, -1);
-        wmove(m_pWindow, 0, 0);
-        winsertln(m_pWindow);
-        wrefresh(m_pWindow);
-        update_panels();
+    } else if (key == KEY_UP) {
+        if (getScrollY() > 0) {
+            scrollY(-1);
+        }
     } else if (key == KEY_DOWN) {
-        scroll(m_pWindow);
-        wrefresh(m_pWindow);
-        update_panels();
-    }*/
+        int termWidth, termHeight;
+        getmaxyx(stdscr, termHeight, termWidth);
+        if (getScrollY() < getHeight() - termHeight) {
+            scrollY(1);
+        }
+    }
     return false;
 }

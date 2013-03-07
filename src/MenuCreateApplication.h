@@ -10,7 +10,7 @@ class MenuWorkExperience;
 
 class MenuCreateApplication : public Panel {
 public:
-    MenuCreateApplication(const std::string& course, const std::string& studentID);
+    MenuCreateApplication(const std::string& course, const std::string& studentID, bool=false);
     virtual ~MenuCreateApplication();
 
     virtual bool getData(TaApplication**);

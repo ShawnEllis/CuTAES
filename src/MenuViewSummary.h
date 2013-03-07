@@ -26,6 +26,8 @@ public:
     virtual bool handleKeyPress(int key);
     
 private:
+    int createTablesForCourse(const std::string& course, int y);
+    
     Table* createTable(Student**, int count, int y, bool isUndergrad);
     
     void getApplicantsByType(Queue<TaApplication*>* pQueue, Queue<UndergradStudent*>**, Queue<GradStudent*>**);

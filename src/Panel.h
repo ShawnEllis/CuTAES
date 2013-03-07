@@ -57,12 +57,28 @@ protected:
     
     void setReturnState(StateType state) {m_returnState = state;}
     
+    int getScrollX() {return m_scrollX;}
+    void setScrollX(int scrollX) {m_scrollX = scrollX;}
+    void scrollX(int scrollX) {m_scrollX += scrollX;}
+    
+    int getScrollY() {return m_scrollY;}
+    void setScrollY(int scrollY) {m_scrollY = scrollY;}
+    void scrollY(int scrollY) {m_scrollY += scrollY;}
+    
+    void setWidth(int w) {m_width = w; adjustSize();}
+    void setHeight(int h) {m_height = h; adjustSize();}
+    
+    void adjustSize();
+    
 private:
     bool termSizeChanged();
+    void updateScreenCoords();
     
     bool m_visible;
     int m_width, m_height;
     int m_termWidth, m_termHeight;
+    int m_screenXi, m_screenYi, m_screenXf, m_screenYf;
+    int m_scrollY, m_scrollX;
 
     std::string m_title;
     

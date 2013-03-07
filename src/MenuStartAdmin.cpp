@@ -52,7 +52,7 @@ void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     //Get a course selection from user
     MenuStartAdmin::instance()->erase();
     
-    MenuCourseSelector *pCourseSelector = new MenuCourseSelector("Create Application: Select a Course");
+    MenuCourseSelector *pCourseSelector = new MenuCourseSelector("Create Application: Select a Course", true);
     if (pCourseSelector->show() != STATE_SUCCESS) {
         delete pCourseSelector;
         MenuStartAdmin::instance()->draw();

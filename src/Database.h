@@ -21,6 +21,8 @@ class Database {
 public:
     virtual ~Database();
     
+    void getCourses(const std::string** courses, int& count) {*courses = m_courses; count = m_numCourses;}
+    
     void addStudent(Student *pStudent, bool save=true);
     void addApplication(TaApplication *pApplication, bool save=true);
     
@@ -37,6 +39,10 @@ private:
     Queue<Student*> *m_pStudentQueue;
     Queue<Queue<TaApplication*>*>* m_pApplicationQueue;
     
+    std::string* m_courses;
+    int m_numCourses;
+    
+    void loadCourses();
     void loadStudents();
     void loadStudent(const std::string &filename);
     void loadApplications();

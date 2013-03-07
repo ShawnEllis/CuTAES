@@ -9,7 +9,7 @@ class Button;
 
 class MenuCourseSelector : public Panel {
 public:
-    MenuCourseSelector(const std::string& title);
+    MenuCourseSelector(const std::string& title, bool allowAll=false);
     virtual ~MenuCourseSelector();
 
     virtual bool handleKeyPress(int key);
@@ -22,6 +22,8 @@ public:
     
 private:
     std::string m_selectedCourse;
+    
+    bool m_allowAll;
     
     void setSelectedCourse(const std::string& str) {m_selectedCourse = str;}
 };

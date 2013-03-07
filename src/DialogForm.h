@@ -20,6 +20,13 @@
 #include <form.h>
 #include "StringUtil.h"
 
+enum FieldType {
+    FIELDTYPE_NONE,
+    FIELDTYPE_ALPHA,
+    FIELDTYPE_INT,
+    FIELDTYPE_FLOAT
+};
+
 class DialogForm : public Panel {
 public:
     DialogForm(const std::string &title, int numFields);
@@ -32,13 +39,13 @@ public:
     
     bool getFormData(std::string **pData);
     
-    void addField(const std::string &label, int rows, int cols, int type=0, int *typeParams=0, int nParams=0);
+    void addField(const std::string &label, int rows, int cols, const FieldType type=FIELDTYPE_NONE, int *typeParams=0, int nParams=0);
     
-    void addField(const std::string &label, const std::string &txt, int rows, int cols, int type=0, int *typeParams=0, int nParams=0);
+    void addField(const std::string &label, const std::string &txt, int rows, int cols, const FieldType type=FIELDTYPE_NONE, int *typeParams=0, int nParams=0);
     
-    void addField(const std::string &label, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0, FIELD** pField=0);
+    void addField(const std::string &label, int rows, int cols, int x, int y, const FieldType type=FIELDTYPE_NONE, int *typeParams=0, int nParams=0, FIELD** pField=0);
     
-    void addField(const std::string &label, const std::string& txt, int rows, int cols, int x, int y, int type=0, int *typeParams=0, int nParams=0, FIELD** pField=0);
+    void addField(const std::string &label, const std::string& txt, int rows, int cols, int x, int y, const FieldType type=FIELDTYPE_NONE, int *typeParams=0, int nParams=0, FIELD** pField=0);
     
 private:
     int m_numFields, m_curField; //Total and current number of fields
@@ -49,13 +56,6 @@ private:
     
     bool isDataValid();
     bool isFieldValid();
-};
-
-enum {
-    FIELDTYPE_NONE = 0,
-    FIELDTYPE_ALPHA,
-    FIELDTYPE_INT,
-    FIELDTYPE_FLOAT
 };
 
 

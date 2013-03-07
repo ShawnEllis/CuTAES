@@ -72,6 +72,18 @@ public:
         m_pLast = 0;
     }
     
+    T* toArray() {
+        T* arr = new T[m_size];
+        Node<T>* pCur = front();
+        int i = 0;
+        while (pCur != 0) {
+            arr[i] = pCur->value;
+            i++;
+            pCur = pCur->m_pNext;
+        }
+        return arr;
+    }
+    
     /*
      * Add a value to the back of the queue.
      */

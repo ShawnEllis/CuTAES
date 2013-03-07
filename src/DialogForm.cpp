@@ -32,6 +32,10 @@ DialogForm::~DialogForm() {
 //    free_form(m_pForm); TODO: Fix segfault
     for (int i = 0; i < m_numFields; i++) {
         if (m_pFields[i] != 0) {
+            void *usrPtr = field_userptr(m_pFields[i]);
+            if (usrPtr != 0) {
+                delete (FieldType*)usrPtr; //TODO: Fix potentially unsafe conversion
+            }
             free_field(m_pFields[i]);
         }
     }
@@ -155,7 +159,20 @@ bool DialogForm::handleKeyPress(int key) {
 }
 
 bool DialogForm::isFieldValid() {
+    FIELD* pField = current_field(m_pForm);
+    if (pField == 0) {
+        return true;
+    }
+    //Get field type
+    void* usrPtr = field_userptr(pField);
+    FieldType type = usrPtr == 0 ? FIELDTYPE_NONE : *(FieldType*)usrPtr;
+    //Get field text
+    std::string fieldText = field_buffer(pField, 0);
+    StringUtil::trimEnd(fieldText);
+    
+    //Check if field is valid TODO: Add own validation
     if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD) {
+        //Field is invalid, highlight it
         set_field_back(current_field(m_pForm), A_STANDOUT);
         return false;
     }
@@ -194,17 +211,17 @@ bool DialogForm::getFormData(std::string **pData) {
     return true;
 }
 
-void DialogForm::addField(const std::string &label, int rows, int cols, int type, int *typeParams, int nParams) {
+void DialogForm::addField(const std::string &label, int rows, int cols, FieldType type, int *typeParams, int nParams) {
     addField(label, rows, cols, 0, m_curField * 2, type, typeParams, nParams);
 }
 
-void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, int type, int *typeParams, int nParams) {
+void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, FieldType type, int *typeParams, int nParams) {
     std::stringstream ss;
     ss << label << "|" << txt;
     addField(ss.str(), rows, cols, 0, m_curField * 2, type, typeParams, nParams);
 }
 
-void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {
+void DialogForm::addField(const std::string &label, const std::string &txt, int rows, int cols, int x, int y, FieldType type, int *typeParams, int nParams, FIELD** pField) {
     std::stringstream ss;
     ss << label << "|" << txt;
     addField(ss.str(), rows, cols, x, y, type, typeParams, nParams, pField);
@@ -215,7 +232,7 @@ void DialogForm::addField(const std::string &label, const std::string &txt, int 
  * Automatically creates a label component.
  * Include | in your label to designate a field's initial content.
  */
-void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int y, int type, int *typeParams, int nParams, FIELD** pField) {    
+void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int y, FieldType type, int *typeParams, int nParams, FIELD** pField) {    
     //Split the label and field contents.
     int i;
     std::string contents, label;
@@ -265,6 +282,7 @@ void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int
 //            set_field_type(m_pFields[m_curField], TYPE_NUMERIC, typeParams[0], typeParams[1], typeParams[2]);
         }
     }
+    set_field_userptr(m_pFields[m_curField], (void*)new FieldType(type));
     
     set_field_back(m_pFields[m_curField], A_UNDERLINE);
     if (rows == 1) {

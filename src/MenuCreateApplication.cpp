@@ -7,28 +7,28 @@
 #include "Label.h"
 #include "TaApplication.h"
 
-MenuCreateApplication::MenuCreateApplication(const std::string& course, const std::string& student)
+MenuCreateApplication::MenuCreateApplication(const std::string& course, const std::string& student, bool isGraduate)
 : Panel("Create " + course + " Application: Enter Course Info", 70), m_strCourse(course), m_strStudentID(student) {
     setReturnState(STATE_ERROR);
     
     //Create related courses table
-    {
+    if (!isGraduate) {
         std::string labels[] = {"Course", "Year", "Term", "Grade"};
         int colWidths[] = {8, 4, 4, 5};
         pRelatedCoursesTable = new Table(this, 3, 4, 16, 4, colWidths, labels);
         add(pRelatedCoursesTable);
     }
     //Create TA info table
-    {
-        std::string labels[] = {"Course", "Year", "Term", "Supervisor"};
-        int colWidths[] = {8, 4, 4, 16};
-        int x = pRelatedCoursesTable->getX() +  pRelatedCoursesTable->getWidth() + 1;
-        pTaCoursesTable = new Table(this, x, 4, 16, 4, colWidths, labels);
-        add(pTaCoursesTable);
-    }
+    std::string labels[] = {"Course", "Year", "Term", "Supervisor"};
+    int colWidths[] = {8, 4, 4, 16};
+    int x = isGraduate ? getWidth()/2-18 : pRelatedCoursesTable->getX() +  pRelatedCoursesTable->getWidth() + 1;
+    pTaCoursesTable = new Table(this, x, 4, 16, 4, colWidths, labels);
+    add(pTaCoursesTable);
     
     //Create labels
-    add(new Label(this, "Related Courses", pRelatedCoursesTable->getX(), 3));
+    if (!isGraduate) {
+        add(new Label(this, "Related Courses", pRelatedCoursesTable->getX(), 3));
+    }
     add(new Label(this, "Related Courses TA'd", pTaCoursesTable->getX(), 3));
     add(new Label(this, "Cancel: F3", 1, getHeight() - 2));
     add(new Label(this, "Continue: F2", getWidth() - 13, getHeight() - 2));
@@ -70,11 +70,13 @@ bool MenuCreateApplication::getData(TaApplication **pApplication) {
     std::string *pData;
     
     //Save Related Courses data to application
-    for (int i = 0 ; i < pRelatedCoursesTable->getNumRows(); i++) {
-        pData = 0;
-        pRelatedCoursesTable->getDataInRow(i, &pData);
-        //Create RelatedCourse using row data
-        (*pApplication)->addRelatedCourse(pData[0], atoi(pData[1].data()), pData[2][0], pData[3]);
+    if (pRelatedCoursesTable != 0) {
+        for (int i = 0 ; i < pRelatedCoursesTable->getNumRows(); i++) {
+            pData = 0;
+            pRelatedCoursesTable->getDataInRow(i, &pData);
+            //Create RelatedCourse using row data
+            (*pApplication)->addRelatedCourse(pData[0], atoi(pData[1].data()), pData[2][0], pData[3]);
+        }
     }
     
     //Save TA'd courses data to application

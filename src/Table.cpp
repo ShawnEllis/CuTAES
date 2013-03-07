@@ -21,7 +21,7 @@ Table::Table(Panel *pPanel, int x, int y, int numRows, int numCols, int *colWidt
     
     w = 0;
     for (int i = 0; i < numCols; i++) {
-        m_pLists[i] = new ListBox(pPanel, x + w, y + 2, colWidths[i] + 2, numRows);
+        m_pLists[i] = new ListBox(pPanel, x + w, y + 2, colWidths[i] + 2, numRows, editable);
         pPanel->add(new Label(pPanel, labels[i], x + w + 1, y + 1));
         w += m_colWidths[i] + 1;
     }

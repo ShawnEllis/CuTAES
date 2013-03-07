@@ -18,7 +18,7 @@ class Panel;
 
 class ListBox : public Component {
 public:
-    ListBox(Panel *pPanel, int x=0, int y=0, int w=5, int h=5);
+    ListBox(Panel *pPanel, int x=0, int y=0, int w=5, int h=5, bool=true);
     virtual ~ListBox();
     
     virtual void draw();
@@ -43,6 +43,7 @@ private:
     void createField(FIELD **pField, int y, std::string str);
     void createForm();
     
+    bool m_editable;
     int m_numRows;
     int m_curRow;
     FORM *m_pForm;

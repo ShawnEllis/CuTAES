@@ -11,17 +11,23 @@
 extern std::ofstream dout;
 #endif //DEBUG
 
-ListBox::ListBox(Panel *pPanel, int x, int y, int w, int h) : Component(pPanel, x, y, w, h) {
+ListBox::ListBox(Panel *pPanel, int x, int y, int w, int h, bool editable) : Component(pPanel, x, y, w, h) {
     setSelectable(true);
-    m_numRows = 1;
+    m_editable = true;//editable; TODO: revisit
+    m_numRows = m_editable ? 1 : 0;
     m_pForm = 0;
     m_curRow = 0;
     
     //Create field array, init to null
-    m_pFields = new FIELD*[2];
-    createField(&m_pFields[0], 0, "...");
-    set_field_userptr(m_pFields[0], (void*)true);
-    m_pFields[1] = 0;
+    if (m_editable) {
+        m_pFields = new FIELD*[2];
+        createField(&m_pFields[0], 0, "...");
+        set_field_userptr(m_pFields[0], (void*)true);
+        m_pFields[1] = 0;
+    } else {
+        m_pFields = new FIELD*[1];
+        m_pFields[0] = 0;
+    }
     
     createForm();
 }
@@ -91,22 +97,26 @@ std::string ListBox::getDataAt(int r) {
  *  Must copy data to new array due to limitations in the forms library.
  */
 void ListBox::addRow(const std::string& str) {
-    FIELD **pNewFields = new FIELD*[m_numRows + 2];
+    FIELD **pNewFields = new FIELD*[m_numRows + (m_editable ? 2 : 1)];
     
     //Copy existing fields, up to the second last ('...') row
     for (int i = 0; i < m_numRows - 1; i++) {
         pNewFields[i] = m_pFields[i];
     }
     
-    //Create new field at third-to-last index (before '...' row)
-    createField(&pNewFields[m_numRows - 1], m_numRows - 1, str);
-    
     //Create '...' row
-    createField(&pNewFields[m_numRows], m_numRows, "...");
-    set_field_userptr(pNewFields[m_numRows], (void*)true);
+    if (m_editable) {
+        //Create new field at third-to-last index (before '...' row)
+        createField(&pNewFields[m_numRows - 1], m_numRows - 1, str);
+        
+        createField(&pNewFields[m_numRows], m_numRows, "...");
+        set_field_userptr(pNewFields[m_numRows], (void*)true);
+    } else {
+        createField(&pNewFields[m_numRows], m_numRows, str);
+    }
     
     //Create null field
-    pNewFields[m_numRows + 1] = 0;
+    pNewFields[m_editable ? m_numRows + 1 : m_numRows] = 0;
     m_numRows++;
     
     m_pFields = pNewFields;

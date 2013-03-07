@@ -62,7 +62,7 @@ int main(int argc, const char* argv[]) {
         CuTAES::instance()->setWorkingDirectory(argv[1]); //Init working directory
     }
     Database::instance();
-    MenuStartScreen::instance()->show();    
+    MenuStartScreen::instance()->show();
     
     return 0;
 }

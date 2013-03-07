@@ -17,12 +17,16 @@ Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h
     m_pSelNode = 0;
     m_returnState = STATE_VOID;
     
+    m_scrollX = 0;
+    m_scrollY = 0;
+    
+    getmaxyx(stdscr, m_termHeight, m_termWidth); //Used to center panel
+    updateScreenCoords();
+    
     m_pComponentList = new List<Component*>();
     m_pSelectableList = new List<Component*>();
     
-    getmaxyx(stdscr, m_termHeight, m_termWidth); //Used to determine when to re-center panel
-    
-    m_pWindow = newwin(h, w, (m_termHeight - h) / 2, (m_termWidth - w) / 2);
+    m_pWindow = newpad(h, w);
 
     m_pPanel = new_panel(m_pWindow);
 }
@@ -49,6 +53,8 @@ void Panel::hide()  {
     hide_panel(m_pPanel);
     m_visible = false;
     WindowUtil::fillRect(m_pWindow, 0, 0, getWidth(), getHeight(), ' ');
+    wrefresh(m_pWindow);
+    prefresh(m_pWindow, m_scrollY, m_scrollX, m_screenYi, m_screenXi, m_screenYf, m_screenXf);
     update_panels();
 }
 
@@ -57,11 +63,7 @@ void Panel::draw() {
     int termW, termH;
     getmaxyx(stdscr, termH, termW);
     if (termW != m_termWidth || termH != m_termHeight) {
-        clear();
-        m_termWidth = termW;
-        m_termHeight = termH;
-        wresize(m_pWindow, getHeight(), getWidth()); //Necessary because resizing term resizes term-sized windows
-        move_panel(m_pPanel, (m_termHeight - getHeight()) / 2, (m_termWidth - getWidth()) / 2);
+        adjustSize();
     }
     
     //Decorate the window
@@ -72,6 +74,8 @@ void Panel::draw() {
     drawComponents();
     
     refresh();
+    wrefresh(m_pWindow);
+    prefresh(m_pWindow, m_scrollY, m_scrollX, m_screenYi, m_screenXi, m_screenYf, m_screenXf);
     update_panels();
 }
 
@@ -86,10 +90,26 @@ void Panel::drawComponents() {
     }
 }
 
+void Panel::adjustSize() {
+    getmaxyx(stdscr, m_termHeight, m_termWidth);
+    clear();
+    updateScreenCoords();
+    wresize(m_pWindow, getHeight(), getWidth()); //Necessary because resizing term resizes term-sized windows
+    move_panel(m_pPanel, (m_termHeight - getHeight()) / 2, (m_termWidth - getWidth()) / 2);
+}
+
+void Panel::updateScreenCoords() {
+    m_screenXi = std::max((m_termWidth - m_width) / 2, 0);
+    m_screenYi = std::max((m_termHeight - m_height) / 2, 0);
+    m_screenXf = std::min(m_screenXi + m_width, m_termWidth - 1);
+    m_screenYf = std::min(m_screenYi + m_height, m_termHeight - 1);
+}
+
 void Panel::waitForInput() {
     while (m_visible) {
         update_panels();
         wrefresh(m_pWindow);
+        prefresh(m_pWindow, m_scrollY, m_scrollX, m_screenYi, m_screenXi, m_screenYf, m_screenXf);
         int ch = getch();
         if (m_pSelNode != 0 && m_pSelNode->data->handleKeyPress(ch)) {
             continue;

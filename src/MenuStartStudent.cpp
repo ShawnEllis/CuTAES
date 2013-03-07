@@ -126,7 +126,7 @@ void MenuStartStudent::handleCreatePressed(Button *pButton) {
         
         //Get application info
         
-        MenuCreateApplication *pCreateApplication = new MenuCreateApplication(strCourse, pActiveStudent->getStudentID());
+        MenuCreateApplication *pCreateApplication = new MenuCreateApplication(strCourse, pActiveStudent->getStudentID(), !pMenu->isUndergrad());
         if (pCreateApplication->show() != STATE_SUCCESS) {
             delete pCreateApplication;
             break;
