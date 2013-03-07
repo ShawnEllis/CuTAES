@@ -1,8 +1,9 @@
+undergrad
 Zack
 Dawson
 100851846
-email@address.com
-Computer Science
+fake@email.com
+Comp Sci
 2
 11.5
-10.5
+11

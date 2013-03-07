@@ -1,8 +1,0 @@
-John
-Johnson
-100123456
-john@johnson.com
-Computer Science
-2
-8.7
-8

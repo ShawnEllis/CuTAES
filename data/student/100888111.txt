@@ -1,8 +1,0 @@
-John
-Doe
-100888111
-email@address.com
-Computer Science
-2
-10.5
-9
