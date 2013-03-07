@@ -3,11 +3,12 @@
 
 #include "Button.h"
 #include "DialogForm.h"
-#include "MenuCourseSelector.h"
-#include "MenuCreateApplication.h"
-#include "TaApplication.h"
+#include "DialogListSelector.h"
 #include "DialogYesNo.h"
+#include "MenuCreateApplication.h"
+
 #include "Database.h"
+#include "TaApplication.h"
 #include "Student.h"
 #include "UndergradStudent.h"
 #include "GradStudent.h"
@@ -73,12 +74,20 @@ void MenuStartStudent::handleCreatePressed(Button *pButton) {
         
         //Get a course selection from user
         
-        MenuCourseSelector *pCourseSelector = new MenuCourseSelector("Create Application: Select a Course");
+        //Get course list
+        const std::string* courses;
+        int count;
+        Database::instance()->getCourses(&courses, count);
+        //Show dialog
+        DialogListSelector *pCourseSelector = new DialogListSelector("Create Application: Select a Course", courses, count);
         if (pCourseSelector->show() != STATE_SUCCESS) {
             delete pCourseSelector;
             break;
         }
-        std::string strCourse = pCourseSelector->getSelectedCourse();
+        std::string strCourse = pCourseSelector->getSelectedValue();
+        if (strCourse.compare("all") == 0) {
+            strCourse = "All Courses";
+        }
         delete pCourseSelector;
         
         //Get student info
@@ -171,19 +180,20 @@ Student* MenuStartStudent::showUndergradDialog(UndergradStudent *pActiveStudent)
     bool isDataValid = pForm->getFormData(&data);
     delete pForm;
     if (isDataValid) {
-        return new UndergradStudent(data);
+        UndergradStudent *pStu = new UndergradStudent(data);
+        delete [] data;
+        return pStu;
     }
     return 0;
 }
 
 Student* MenuStartStudent::showGradDialog(GradStudent *pActiveStudent) {
     //Create student info dialog
-    DialogForm *pForm = new DialogForm("Enter Student Info", 7);    
+    DialogForm *pForm = new DialogForm("Enter Student Info", 6);    
     pForm->addField("First Name:   ", pActiveStudent == 0 ? "" : pActiveStudent->getFirstName(), 1, 32, FIELDTYPE_ALPHA);
     pForm->addField("Last Name:    ", pActiveStudent == 0 ? "" : pActiveStudent->getLastName(), 1, 32, FIELDTYPE_ALPHA);
     pForm->addField("Student ID:   ", pActiveStudent == 0 ? "" : pActiveStudent->getStudentID(), 1, 32, FIELDTYPE_INT);
     pForm->addField("Email:        ", pActiveStudent == 0 ? "" : pActiveStudent->getEmail(), 1, 32);
-    pForm->addField("Research Area:", pActiveStudent == 0 ? "" : pActiveStudent->getResearchArea(), 1, 32, FIELDTYPE_ALPHA);
     pForm->addField("Supervisor:   ", pActiveStudent == 0 ? "" : pActiveStudent->getSupervisor(), 1, 32, FIELDTYPE_ALPHA);
     pForm->addField("Program:      ", pActiveStudent == 0 ? "" : pActiveStudent->getProgram(), 1, 4, FIELDTYPE_ALPHA);
     
@@ -193,11 +203,33 @@ Student* MenuStartStudent::showGradDialog(GradStudent *pActiveStudent) {
     }
     
     //Get result
-    std::string *data = 0;
-    bool isDataValid = pForm->getFormData(&data);
+    std::string *pFormData = 0;
+    bool isDataValid = pForm->getFormData(&pFormData);
     delete pForm;
     if (isDataValid) {
-        return new GradStudent(data);
+        //TODO: Get research area
+        
+        const std::string* researchAreas;
+        int count;
+        Database::instance()->getResearchAreas(&researchAreas, count);
+        //Show dialog
+        DialogListSelector *pDia = new DialogListSelector("Create Application: Choose Research Area", researchAreas, count);
+        if (pDia->show() != STATE_SUCCESS) {
+            delete pDia;
+            return 0;
+        }
+        //Copy data into larger array
+        std::string *pData = new std::string[7];
+        for (int i = 0; i < 6; i++) {
+            pData[i] = pFormData[i];
+        }
+        delete [] pFormData;
+        pData[6] = pDia->getSelectedValue();
+        delete pDia;
+        
+        GradStudent* pStu = new GradStudent(pData);
+        delete [] pData;
+        return pStu;
     }
     return 0;
 }

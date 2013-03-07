@@ -67,11 +67,15 @@ int MenuViewSummary::createTablesForCourse(const std::string &course, int y) {
     Table *pTable = 0;
     if (pUndergrads != 0) {
         pTable = createTable(sortByGPA(pUndergrads), pUndergrads->getSize(), y, true);
-        y = pTable->getHeight() + pTable->getY();
+        if (pTable) {
+            y = pTable->getHeight() + pTable->getY();
+        }
     }
     if (pGrads != 0) {
         pTable = createTable(sortByResearchArea(pGrads), pGrads->getSize(), y, false);
-        y = pTable->getHeight() + pTable->getY();
+        if (pTable) {
+            y = pTable->getHeight() + pTable->getY();
+        }
     }
     return y;
 }

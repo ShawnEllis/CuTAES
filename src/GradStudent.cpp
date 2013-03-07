@@ -15,9 +15,9 @@ using namespace std;
 
 GradStudent::GradStudent(string *data) : Student(data) {
     m_type = TYPE_GRAD;
-    m_researchArea = data[4];
-    m_supervisor = data[5];
-    m_program = data[6];
+    m_supervisor = data[4];
+    m_program = data[5];
+    m_researchArea = data[6];
 }
 
 GradStudent::~GradStudent() {
@@ -30,9 +30,9 @@ int GradStudent::getData(std::string** pData) {
     data[1] = getLastName();
     data[2] = getStudentID();
     data[3] = getEmail();
-    data[4] = getResearchArea();
-    data[5] = getSupervisor();
-    data[6] = getProgram();
+    data[4] = getSupervisor();
+    data[5] = getProgram();
+    data[6] = getResearchArea();
     *pData = data;
     return 7;
 }
