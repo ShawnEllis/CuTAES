@@ -1,11 +1,7 @@
 COMP1406
-100100100
+100999333
 pending
 related
-  COMP1405
-  1
-  F
-  
 ta
 work
 end

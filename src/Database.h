@@ -22,6 +22,7 @@ public:
     virtual ~Database();
     
     void getCourses(const std::string** courses, int& count) {*courses = m_courses; count = m_numCourses;}
+    void getResearchAreas(const std::string** researchAreas, int& count) {*researchAreas = m_researchAreas; count = m_numResearchAreas;}
     
     void addStudent(Student *pStudent, bool save=true);
     void addApplication(TaApplication *pApplication, bool save=true);
@@ -39,10 +40,10 @@ private:
     Queue<Student*> *m_pStudentQueue;
     Queue<Queue<TaApplication*>*>* m_pApplicationQueue;
     
-    std::string* m_courses;
-    int m_numCourses;
+    std::string *m_courses, *m_researchAreas;
+    int m_numCourses, m_numResearchAreas;
     
-    void loadCourses();
+    void loadList(const std::string&, std::string**, int&);
     void loadStudents();
     void loadStudent(const std::string &filename);
     void loadApplications();

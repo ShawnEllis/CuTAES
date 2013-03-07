@@ -1,8 +1,9 @@
-A
-A
+undergrad
+Test
+Student
 100000000
-asd
-asd
+teststudent@email.com
+Comp Sci
 2
-11
-11
+10
+10

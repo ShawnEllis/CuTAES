@@ -5,7 +5,6 @@
 
 #include "Button.h"
 #include "Label.h"
-#include "MenuCourseSelector.h"
 #include "Database.h"
 
 MenuCourseSelector::MenuCourseSelector(const std::string& title, bool allowAll) : Panel(title), m_allowAll(allowAll) {

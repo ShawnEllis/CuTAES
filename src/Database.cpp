@@ -20,7 +20,8 @@ Database* Database::m_pInstance = 0;
 Database::Database() {
     m_pStudentQueue = new Queue<Student*>();
     m_pApplicationQueue = new Queue<Queue<TaApplication*>*>();
-    loadCourses();
+    loadList("CourseList.txt", &m_courses, m_numCourses);
+    loadList("ResearchAreaList.txt", &m_researchAreas, m_numResearchAreas);
     loadStudents();
     loadApplications();
 }
@@ -115,11 +116,11 @@ void Database::replaceStudent(Student *pExisting, Student *pNew) {
     }
 }
 
-void Database::loadCourses() {
+void Database::loadList(const std::string& fileName, std::string** pList, int& pCount) {
     //Load course list
     Queue<std::string>* pQueue = new Queue<std::string>();
     std::ifstream file;
-    file.open((CuTAES::instance()->getDataDirectory() + "CourseList.txt").data());
+    file.open((CuTAES::instance()->getDataDirectory() + fileName).data());
     if (file.is_open()) {
         std::string line;
         //Read each course and make buttons for each
@@ -129,8 +130,8 @@ void Database::loadCourses() {
         }
         file.close();
     }
-    m_courses = pQueue->toArray();
-    m_numCourses = pQueue->getSize();
+    *pList = pQueue->toArray();
+    pCount = pQueue->getSize();
     delete pQueue;
 }
 
