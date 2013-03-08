@@ -1,7 +1,6 @@
 #include "MenuCreateApplication.h"
 #include <stdlib.h>
 
-#include "MenuCourseSelector.h"
 #include "MenuWorkExperience.h"
 #include "Table.h"
 #include "Label.h"

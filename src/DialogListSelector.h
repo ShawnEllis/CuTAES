@@ -24,6 +24,7 @@ private:
     
     bool m_allowAll;
     
+    void scrollScreen();
     void setSelectedValue(const std::string& str) {m_selectedValue = str;}
 };
 
