@@ -8,6 +8,16 @@ public:
         str = str.substr(0,pos+1);
     }
     
+    static void trimStart(std::string &str) {
+        int pos = str.find_first_not_of(' ');
+        str = str.substr(pos);
+    }
+    
+    static void trim(std::string& str) {
+        trimEnd(str);
+        trimStart(str);
+    }
+    
     static int count(const std::string& str, char c) {
         int count = 0;
         for (int i = 0; i < str.size(); i++) {

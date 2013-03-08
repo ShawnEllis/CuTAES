@@ -16,6 +16,8 @@ MenuCreateApplication::MenuCreateApplication(const std::string& course, const st
         int colWidths[] = {8, 4, 4, 5};
         pRelatedCoursesTable = new Table(this, 3, 4, 16, 4, colWidths, labels);
         add(pRelatedCoursesTable);
+    } else {
+        pRelatedCoursesTable = 0;
     }
     //Create TA info table
     std::string labels[] = {"Course", "Year", "Term", "Supervisor"};

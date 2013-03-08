@@ -225,6 +225,7 @@ Student* MenuStartStudent::showGradDialog(GradStudent *pActiveStudent) {
         }
         delete [] pFormData;
         pData[6] = pDia->getSelectedValue();
+        StringUtil::trim(pData[6]);
         delete pDia;
         
         GradStudent* pStu = new GradStudent(pData);

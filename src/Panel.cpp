@@ -33,9 +33,9 @@ Panel::Panel(const string &t, int w, int h) : m_title(t), m_width(w), m_height(h
 
 Panel::~Panel() {
 //    delwin(m_pWindow);
-//    m_pComponentList->clear<Component*>();
-//    delete m_pComponentList;
-//    delete m_pSelectableList;
+    m_pComponentList->clear<Component*>();
+    delete m_pComponentList;
+    delete m_pSelectableList;
 }
 
 StateType Panel::show() {

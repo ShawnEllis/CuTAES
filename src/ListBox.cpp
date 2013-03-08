@@ -117,6 +117,13 @@ void ListBox::addRow(const std::string& str) {
     
     //Create null field
     pNewFields[m_editable ? m_numRows + 1 : m_numRows] = 0;
+    
+    for (int i = 0; i < m_numRows; i++) {
+        if (m_pFields[i] != 0) {
+            free_field(m_pFields[i]);
+        }
+    }
+    
     m_numRows++;
     
     m_pFields = pNewFields;
@@ -175,9 +182,6 @@ void ListBox::createForm() {
     if (m_pForm != 0) {
         unpost_form(m_pForm);
         free_form(m_pForm);
-//        set_form_fields(m_pForm, m_pFields); TODO: revisit
-//        scale_form(m_pForm, &rows, &cols);
-//        return;
     }
     m_pForm = new_form(m_pFields);
     int rows, cols;

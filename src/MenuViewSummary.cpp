@@ -65,16 +65,22 @@ int MenuViewSummary::createTablesForCourse(const std::string &course, int y) {
     //Create tables
     Table *pTable = 0;
     if (pUndergrads != 0) {
-        pTable = createTable(sortByGPA(pUndergrads), pUndergrads->getSize(), y, true);
+        Student** pSortedList = sortByGPA(pUndergrads);
+        pTable = createTable(pSortedList, pUndergrads->getSize(), y, true);
+        delete [] pSortedList;
         if (pTable) {
             y = pTable->getHeight() + pTable->getY();
         }
+        delete pUndergrads;
     }
     if (pGrads != 0) {
-        pTable = createTable(sortByResearchArea(pGrads), pGrads->getSize(), y, false);
+        Student** pSortedList = sortByResearchArea(pGrads);
+        pTable = createTable(pSortedList, pGrads->getSize(), y, false);
+        delete [] pSortedList;
         if (pTable) {
             y = pTable->getHeight() + pTable->getY();
         }
+        delete pGrads;
     }
     return y;
 }
@@ -128,6 +134,10 @@ Table* MenuViewSummary::createTable(Student **pStudents, int numStudents, int y,
     return pTable;
 }
 
+/*
+ * Returns applicants sorted into two lists by type.
+ * You must free r_pUndergrads and r_pGrads.
+ */
 void MenuViewSummary::getApplicantsByType(Queue<TaApplication *>* pQueue, Queue<UndergradStudent*>** r_pUndergrads, Queue<GradStudent*>** r_pGrads) {
     if (pQueue == 0 || r_pUndergrads == 0 || *r_pUndergrads != 0 || r_pGrads == 0 || *r_pGrads != 0) {
         return;
