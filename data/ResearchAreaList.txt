@@ -1,4 +1,10 @@
-Robotics
-AI
-Game Design
-Other
+         AI          
+   Compiler Design   
+   Computer Vision   
+   Data Structures   
+      Databases      
+Distributed Computing
+     Game Design     
+  Interface Design   
+      Robotics       
+        Other        

@@ -9,7 +9,7 @@
 
 DialogListSelector::DialogListSelector(const std::string& title, const std::string* values, int count, bool allowAll) : Panel(title, 42, 1000), m_allowAll(allowAll) {
     setReturnState(STATE_ERROR);
-
+    
     //Create buttons for each research area
     Button *pButton;
     for (int i = 0; i < count; i++) {
@@ -24,9 +24,9 @@ DialogListSelector::DialogListSelector(const std::string& title, const std::stri
  
     int termWidth, termHeight;
     getmaxyx(stdscr, termHeight, termWidth);
-    add(new Label(this, "F3: Cancel", 1, termHeight - 1, true));
+    add(new Label(this, "F3: Cancel", 0, termHeight - 1, true));
     if (m_allowAll) {
-        add(new Label(this, "F2: All", termWidth - 17, termHeight - 1, true));
+        add(new Label(this, "F2: All", termWidth - 16, termHeight - 1, true));
     }
 }
 
@@ -43,8 +43,43 @@ bool DialogListSelector::handleKeyPress(int key) {
             setReturnState(STATE_SUCCESS);
             hide();
         }
+    } else if (key == KEY_UP) {
+        //Override panel's default navigation
+        //Select prev item
+        m_pSelNode->data->setSelected(false);
+        m_pSelNode = (m_pSelNode->pPrev != 0) ? m_pSelNode->pPrev : m_pSelectableList->last();
+        m_pSelNode->data->setSelected(true);
+        scrollScreen();
+        draw();
+        return true;
+    } else if (key == KEY_DOWN) {
+        //Override panel's default navigation
+        //Select next item
+        m_pSelNode->data->setSelected(false);
+        m_pSelNode = (m_pSelNode->pNext != 0) ? m_pSelNode->pNext : m_pSelectableList->first();
+        m_pSelNode->data->setSelected(true);
+        scrollScreen();
+        draw();
+        return true;
     }
+
     return false;
+}
+
+void DialogListSelector::scrollScreen() {
+    //Get term width and height
+    int termWidth, termHeight;
+    getmaxyx(stdscr, termHeight, termWidth);
+    
+    //Determine if screen needs to scroll
+    int compY = m_pSelNode->data->getY() + m_pSelNode->data->getHeight() + 3;
+    if (getScrollY() > m_pSelNode->data->getY()) { 
+        //Scroll up
+        setScrollY(m_pSelNode->data->getY() + 3 - termHeight);
+    } else if (getScrollY() + termHeight < compY) { 
+        //Scroll down
+        setScrollY(std::min(getHeight() - termHeight, m_pSelNode->data->getY() + m_pSelNode->data->getHeight() + 4 - termHeight));
+    }   
 }
 
 //Event handlers

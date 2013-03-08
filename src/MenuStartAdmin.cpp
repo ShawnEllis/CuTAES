@@ -1,7 +1,8 @@
 #include "MenuStartAdmin.h"
 #include "Button.h"
-#include "MenuCourseSelector.h"
+#include "DialogListSelector.h"
 #include "MenuViewSummary.h"
+#include "Database.h"
 
 MenuStartAdmin* MenuStartAdmin::m_pInstance = 0;
 
@@ -51,15 +52,24 @@ void MenuStartAdmin::handleBackPressed(Button *pButton) {
 void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     //Get a course selection from user
     MenuStartAdmin::instance()->erase();
-    
-    MenuCourseSelector *pCourseSelector = new MenuCourseSelector("Create Application: Select a Course", true);
+
+    //Get course list
+    const std::string* courses;
+    int count;
+    Database::instance()->getCourses(&courses, count);
+    //Show dialog
+    DialogListSelector *pCourseSelector = new DialogListSelector("View Summary: Select a Course", courses, count, true);
     if (pCourseSelector->show() != STATE_SUCCESS) {
         delete pCourseSelector;
         MenuStartAdmin::instance()->draw();
         return;
     }
-    std::string strCourse = pCourseSelector->getSelectedCourse();
+    std::string strCourse = pCourseSelector->getSelectedValue();
+    if (strCourse.compare("all") == 0) {
+        strCourse = "All Courses";
+    }
     delete pCourseSelector;
+    
     //Show list of applications
     MenuViewSummary *pViewSummary = new MenuViewSummary(strCourse + ": Pending Applications", strCourse);
     pViewSummary->show();
