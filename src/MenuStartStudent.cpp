@@ -160,11 +160,11 @@ void MenuStartStudent::handleCreatePressed(Button *pButton) {
 Student* MenuStartStudent::showUndergradDialog(UndergradStudent *pActiveStudent) {
     //Create student info dialog
     DialogForm *pForm = new DialogForm("Enter Student Info", 8);    
-    pForm->addField("First Name:   ", pActiveStudent == 0 ? "" : pActiveStudent->getFirstName(), 1, 32, FIELDTYPE_ALPHA);
-    pForm->addField("Last Name:    ", pActiveStudent == 0 ? "" : pActiveStudent->getLastName(), 1, 32, FIELDTYPE_ALPHA);
+    pForm->addField("First Name:   ", pActiveStudent == 0 ? "" : pActiveStudent->getFirstName(), 1, 32, FIELDTYPE_NAME);
+    pForm->addField("Last Name:    ", pActiveStudent == 0 ? "" : pActiveStudent->getLastName(), 1, 32, FIELDTYPE_NAME);
     pForm->addField("Student ID:   ", pActiveStudent == 0 ? "" : pActiveStudent->getStudentID(), 1, 32, FIELDTYPE_INT);
-    pForm->addField("Email:        ", pActiveStudent == 0 ? "" : pActiveStudent->getEmail(), 1, 32);
-    pForm->addField("Major:        ", pActiveStudent == 0 ? "" : pActiveStudent->getMajor(), 1, 32);
+    pForm->addField("Email:        ", pActiveStudent == 0 ? "" : pActiveStudent->getEmail(), 1, 32, FIELDTYPE_EMAIL);
+    pForm->addField("Major:        ", pActiveStudent == 0 ? "" : pActiveStudent->getMajor(), 1, 32, FIELDTYPE_NAME);
     pForm->addField("Year Standing:", pActiveStudent == 0 ? "" : StringUtil::itos(pActiveStudent->getYearStanding()), 1, 2, FIELDTYPE_INT);
     int range[] = {0, 1, 12};// TODO: Investigate why float validation is broken on OS X
     pForm->addField("CGPA:", pActiveStudent == 0 ? "" : StringUtil::ftos(pActiveStudent->getCGPA()), 1, 4, 20, 10, FIELDTYPE_FLOAT, range, 3);

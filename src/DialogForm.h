@@ -17,6 +17,7 @@
 #include "Panel.h"
 #include <string>
 #include <curses.h>
+//TODO import c isAlpha stuff
 #include <form.h>
 #include "StringUtil.h"
 
@@ -24,7 +25,9 @@ enum FieldType {
     FIELDTYPE_NONE,
     FIELDTYPE_ALPHA,
     FIELDTYPE_INT,
-    FIELDTYPE_FLOAT
+    FIELDTYPE_FLOAT,
+    FIELDTYPE_EMAIL,
+    FIELDTYPE_NAME
 };
 
 class DialogForm : public Panel {
@@ -56,6 +59,10 @@ private:
     
     bool isDataValid();
     bool isFieldValid();
+
+    bool isValidName(const std::string text);
+    bool isValidEmail(const std::string text);
+
 };
 
 

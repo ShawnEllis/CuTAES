@@ -171,7 +171,7 @@ bool DialogForm::isFieldValid() {
     StringUtil::trimEnd(fieldText);
     
     //Check if field is valid TODO: Add own validation
-    if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD) {
+    if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD || (type == FIELDTYPE_EMAIL && !isValidEmail(fieldText)) || (type == FIELDTYPE_NAME && !isValidName(fieldText))) {
         //Field is invalid, highlight it
         set_field_back(current_field(m_pForm), A_STANDOUT);
         return false;
@@ -299,4 +299,23 @@ void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int
     }
     
     m_curField++;
+}
+
+bool DialogForm::isValidName(const std::string text){
+    std::string str = text;
+    unsigned found =str.find_first_not_of("abcdefghijklmnopqrstuvwxyz'- ");
+    if (found != std::string::npos && str.length() > 0)
+        return false;
+    return true;
+}
+
+bool DialogForm::isValidEmail(const std::string text){
+    std::string str = text;
+    unsigned found = str.find_first_not_of("abcdefghijklmnopqrstuvwxyz1234567890_-@.");
+    if (found != std::string::npos)
+        return false;
+    found = str.find_first_of('@');
+    if ((found == std::string::npos || str.find_first_of('@', found+1) != std::string::npos) && str.length() > 0)
+	return false;
+    return true;
 }
