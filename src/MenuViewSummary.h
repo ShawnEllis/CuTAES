@@ -27,6 +27,7 @@ public:
     
 private:
     int createTablesForCourse(const std::string& course, int y);
+    void saveCourseData(const std::string& course, std::ofstream *file);
     
     Table* createTable(Student**, int count, int y, bool isUndergrad);
     
