@@ -32,6 +32,9 @@ public:
     
     void saveToFile();
     
+    void operator-();
+    void operator+();
+
     const std::string& getCourse() {return m_course;}
     const std::string& getStudentID() {return m_studentID;}
     const std::string& getApplicationID() {return m_applicationID;}
