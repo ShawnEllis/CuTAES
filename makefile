@@ -24,3 +24,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/*.h
 clean:
 	rm -f $(OUT) $(OBJDIR)/*.o
 
+
+test:	testCases.o
+	g++ $(CFLAGS) -o test testCases.o
+
+testCases.o:	./src/testCases.cpp
+	g++ -c ./src/testCases.cpp
+
