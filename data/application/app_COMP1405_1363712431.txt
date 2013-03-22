@@ -1,0 +1,36 @@
+app_COMP1405_1363712431
+COMP1405
+100851846
+accepted
+related
+  COMP1405
+  1
+  F
+  A+
+  COMP1406
+  1
+  W
+  A+
+  COMP1501
+  1
+  W
+  A+
+  COMP2401
+  2
+  F
+  A+
+ta
+  COMP1405
+  2
+  F
+  Lanthier
+  COMP1406
+  2
+  W
+  Lanthier
+work
+  Programming
+  Game dev at Simian Mind
+  2008
+  -
+end

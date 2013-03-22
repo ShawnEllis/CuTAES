@@ -1,0 +1,9 @@
+undergrad
+Trent
+Easton
+100555666
+fake@email.com
+Comp Sci
+3
+10
+7
