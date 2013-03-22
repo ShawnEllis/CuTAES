@@ -103,3 +103,13 @@ void TaApplication::saveToFile() {
         file.close();
     }
 }
+
+void TaApplication::operator-(){
+  m_status = STATUS_CLOSED;
+  saveToFile(); 
+}
+
+void TaApplication::operator+(){
+  m_status = STATUS_ACCEPTED;
+  saveToFile();
+}

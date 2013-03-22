@@ -36,7 +36,7 @@ public:
         m_pFirst = 0;
         m_pLast = 0;
         m_size = 0;
-        Node<T> *currpQueueNode = pQueue->front();
+        Node<T> *currpQueueNode = pQueue.front();
         while (currpQueueNode != 0){
           pushBack(currpQueueNode->value);
           currpQueueNode = currpQueueNode->m_pNext;
@@ -126,7 +126,7 @@ public:
     /*
      * Returns the value of the front.
      */
-    T peek() {
+    T peek() const {
         if (m_pFirst == 0) {
             return 0;
         }
@@ -136,7 +136,7 @@ public:
     /*
      * Returns the front node. Useful for iterating over the queue.
      */
-    Node<T> *front() {
+    Node<T> *front() const {
         return m_pFirst;
     }
     
@@ -161,39 +161,44 @@ public:
      *  Adds data to queue
     */
     Queue<T>& operator+=(T *t){
-      if (t != 0) pushBack(t);
-      return this;
+      if (t != 0) pushBack(*t);
+      return *this;
     }
 
     /*
      *  Iterates through second queue and adds all elements to first queue
     */
     Queue<T>& operator+=(const Queue<T>& queue){
-      Node<T> *queueHead = queue->front();
+      Node<T> *queueHead = queue.front();
       while (queueHead != 0){
-        this += queueHead->value;
+        *this += &(queueHead->value);
         queueHead = queueHead->m_pNext;
       }
-      return this;
+      return *this;
     }
 
     /*
      *  Adds data to queue
     */
     Queue<T>& operator+(T *t){
-      Queue<T>& newQueue = this;
-      return (newQueue += t);
+      Queue<T>* newQueue = new Queue<T>(*this);
+      *newQueue += t;
+      return *newQueue;
     }
 
 
     Queue<T>& operator+(const Queue<T>& queue){
-      Queue<T>& newQueue = this;
-      return (newQueue += queue);
+      Queue<T>* newQueue = new Queue<T>(*this);
+      *newQueue += queue;
+      return *newQueue;
     }
 
+    /*
+     *  remove data from queue
+    */
     Queue<T>& operator-=(T *t){
-      if (t == 0) return this; // if t is null
-      if (isEmpty()) return this; // if queue is empty
+      if (t == 0) return *this; // if t is null
+      if (isEmpty()) return *this; // if queue is empty
       Node<T> *currNode, *prevNode;
       prevNode = 0;
       currNode = front();
@@ -210,27 +215,29 @@ public:
       }
       m_size--;
       delete currNode;
-      return this;
+      return *this;
     }
 
     Queue<T>& operator-=(const Queue<T>& queue){
-      if (queue->isEmpty() || isEmpty) return this; // if either queue is empty
-      Node<T> *nodeToDel = queue->front();
+      if (queue->isEmpty() || isEmpty()) return *this; // if either queue is empty
+      Node<T> *nodeToDel = queue.front();
       while (nodeToDel != 0){
         this -= nodeToDel->value;
         nodeToDel = nodeToDel->m_pNext;
       }
-      return this;
+      return *this;
     }
 
     Queue<T>& operator-(T *t){
-      Queue<T>& newQueue = this;
-      return (newQueue -= t);
+      Queue<T>* newQueue = new Queue<T>(*this);
+      *newQueue -= t;
+      return newQueue;
     }
 
     Queue<T>& operator-(const Queue<T>& queue){
-      Queue<T>& newQueue = this;
-      return (newQueue -= queue);
+      Queue<T>* newQueue = new Queue<T>(*this);
+      *newQueue -= queue;
+      return newQueue;
     }
 
     void operator!(){
