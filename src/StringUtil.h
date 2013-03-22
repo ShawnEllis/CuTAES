@@ -4,16 +4,25 @@
 class StringUtil {
 public:
     static void trimEnd(std::string &str) {
+        if (str.length() == 0) {
+            return;
+        }
         int pos = str.find_last_not_of(' ');
         str = str.substr(0,pos+1);
     }
     
     static void trimStart(std::string &str) {
+        if (str.length() == 0) {
+            return;
+        }
         int pos = str.find_first_not_of(' ');
         str = str.substr(pos);
     }
     
     static void trim(std::string& str) {
+        if (str.length() == 0) {
+            return;
+        }
         trimEnd(str);
         trimStart(str);
     }

@@ -22,7 +22,9 @@ public:
     virtual int getData(std::string**) = 0;
     
     void addApplication(TaApplication *pApp);
+    void setApplications(Queue<TaApplication*>* pApplications);
     bool hasAppliedForCourse(const std::string& course);
+    Queue<TaApplication*>* getApplications() {return m_pApplications;}
     
     bool equals(Student *pStu) {return m_firstName.compare(pStu->getFirstName()) == 0
                                     && m_lastName.compare(pStu->getLastName()) == 0

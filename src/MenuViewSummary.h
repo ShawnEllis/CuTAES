@@ -10,17 +10,17 @@
 #define MENU_VIEW_SUMMARY_H
 
 #include "Panel.h"
+#include "TaApplication.h"
 
 template <class T>
 class Queue;
-class TaApplication;
 class Table;
 class UndergradStudent;
 class GradStudent;
 
 class MenuViewSummary : public Panel {
 public:
-    MenuViewSummary(const std::string& title, const std::string& course);
+    MenuViewSummary(const std::string& title, const std::string& course, ApplicationStatus appStatus = STATUS_PENDING);
     virtual ~MenuViewSummary();
     
     virtual bool handleKeyPress(int key);
@@ -36,7 +36,12 @@ private:
     Student** sortByGPA(Queue<UndergradStudent*>* pQueue);
     Student** sortByResearchArea(Queue<GradStudent*>* pQueue);
     
+    void savePending();
+    void saveAssigned();
+    
     int m_panelY;
+    
+    ApplicationStatus m_applicationType;
     
     const std::string& m_course;
 };

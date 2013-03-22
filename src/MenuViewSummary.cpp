@@ -25,8 +25,9 @@ static int UNDERGRAD_COL_WIDTHS[]     = {10, 16, 16, 32, 32, 13, 4, 9};
 static std::string GRAD_LABELS[]      = {"Student ID", "First", "Last", "Email", "Research Area", "Supervisor", "Program"};
 static int GRAD_COL_WIDTHS[]          = {10, 16, 16, 32, 32, 20, 7};
 
-MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course) : Panel(title, 143, 1000), m_course(course) {
+MenuViewSummary::MenuViewSummary(const std::string& title, const std::string& course, ApplicationStatus appStatus) : Panel(title, 143, 1000), m_course(course) {
     setReturnState(STATE_ERROR);
+    m_applicationType = appStatus;
     
     m_panelY = getY();
 
@@ -61,7 +62,9 @@ int MenuViewSummary::createTablesForCourse(const std::string &course, int y) {
     //Get applications
     Queue<UndergradStudent*>* pUndergrads = 0;
     Queue<GradStudent*>* pGrads = 0;
-    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    Queue<TaApplication*>* pApplications = Database::instance()->getApplications(course, m_applicationType);
+    getApplicantsByType(pApplications, &pUndergrads, &pGrads);
+    delete pApplications;
     //Create tables
     Table *pTable = 0;
     if (pUndergrads != 0) {
@@ -235,8 +238,12 @@ bool MenuViewSummary::handleKeyPress(int key) {
         hide();
         return true;
     } else if (key == KEY_F(5)) {
+        if (m_applicationType == STATUS_CLOSED) {
+            return false;
+        }
         //Save summary
-        std::string filename = CuTAES::instance()->getDataDirectory() + "Summary_" + m_course + "_Pending.txt";
+        std::string filename = CuTAES::instance()->getDataDirectory() + "Summary_" + m_course
+        + (m_applicationType == STATUS_PENDING ? "_Pending.txt" : "_Assigned.txt");
         char* scrData = new char[getWidth() * getHeight() + 256];
         mvinstr(0, 0, scrData);
         std::ofstream file;
@@ -245,7 +252,9 @@ bool MenuViewSummary::handleKeyPress(int key) {
         dout << "Saving summary for" << m_course << " to " << filename << std::endl;
 #endif //DEBUG
         if (file.is_open()) {
-            file << "--Summary of Pending Applications for " << m_course << "--";
+            file << "--Summary of "
+                << (m_applicationType == STATUS_PENDING ? "Pending" : "Assigned")
+                << " Applications for " << m_course << "--";
             if (m_course.compare("All Courses") == 0) {
                 const std::string* courses;
                 int count;
@@ -281,7 +290,7 @@ bool MenuViewSummary::handleKeyPress(int key) {
 void MenuViewSummary::saveCourseData(const std::string &course, std::ofstream *file) {
     Queue<UndergradStudent*>* pUndergrads = 0;
     Queue<GradStudent*>* pGrads = 0;
-    getApplicantsByType(Database::instance()->getApplications(course), &pUndergrads, &pGrads);
+    getApplicantsByType(Database::instance()->getApplications(course, m_applicationType), &pUndergrads, &pGrads);
     if (pUndergrads != 0) {
         *file << '|' << "Student ID" << '|';
         *file << StringUtil::pad("First Name", 16) << '|';
@@ -330,4 +339,12 @@ void MenuViewSummary::saveCourseData(const std::string &course, std::ofstream *f
             pCur = pCur->m_pNext;
         }
     }
+}
+
+void MenuViewSummary::savePending() {
+    
+}
+
+void MenuViewSummary::saveAssigned() {
+    
 }

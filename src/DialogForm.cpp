@@ -102,38 +102,43 @@ void DialogForm::draw() {
 bool DialogForm::handleKeyPress(int key) {
     if (key == KEY_UP) {
         //Move up a field
-        isFieldValid();
-        form_driver(m_pForm, REQ_UP_FIELD);
-        form_driver(m_pForm, REQ_END_LINE);
+        if (isFieldValid()) {
+            form_driver(m_pForm, REQ_UP_FIELD);
+            form_driver(m_pForm, REQ_END_LINE);
+        }
     }
     else if (key == KEY_DOWN || key == 9) {
         //Move down a field
-        isFieldValid();
-        form_driver(m_pForm, REQ_NEXT_FIELD);
-        form_driver(m_pForm, REQ_END_LINE);    
+        if (isFieldValid()) {
+            form_driver(m_pForm, REQ_NEXT_FIELD);
+            form_driver(m_pForm, REQ_END_LINE);    
+        }
     }
     else if (key == KEY_LEFT) {
         //Move left in field
         if (form_driver(m_pForm, REQ_LEFT_CHAR) != E_OK) {
-            isFieldValid();
-            form_driver(m_pForm, REQ_LEFT_FIELD);
-            form_driver(m_pForm, REQ_END_LINE);
+            if (isFieldValid()) {
+                form_driver(m_pForm, REQ_LEFT_FIELD);
+                form_driver(m_pForm, REQ_END_LINE);
+            }
         }
     }
     else if (key == KEY_RIGHT) {
         //TODO: Stop right arrow working as spacebar
         //Move right in field
         if (form_driver(m_pForm, REQ_RIGHT_CHAR) != E_OK) {
-            isFieldValid();
-            form_driver(m_pForm, REQ_RIGHT_FIELD);
-            form_driver(m_pForm, REQ_END_LINE);
+            if (isFieldValid()) {
+                form_driver(m_pForm, REQ_RIGHT_FIELD);
+                form_driver(m_pForm, REQ_END_LINE);
+            }
         }  
     }
     else if (key == 9) { //Tab key
         //Move to next field
-        isFieldValid();
-        form_driver(m_pForm, REQ_NEXT_FIELD);
-        form_driver(m_pForm, REQ_END_LINE);
+        if (isFieldValid()) {
+            form_driver(m_pForm, REQ_NEXT_FIELD);
+            form_driver(m_pForm, REQ_END_LINE);
+        }
     }
     else if (key == KEY_BACKSPACE || key == 127) {
         //Delete prev. char
@@ -164,14 +169,14 @@ bool DialogForm::isFieldValid() {
         return true;
     }
     //Get field type
-    void* usrPtr = field_userptr(pField);
+    /*void* usrPtr = field_userptr(pField);
     FieldType type = usrPtr == 0 ? FIELDTYPE_NONE : *(FieldType*)usrPtr;
     //Get field text
     std::string fieldText = field_buffer(pField, 0);
-    StringUtil::trimEnd(fieldText);
+    StringUtil::trimEnd(fieldText);*/
     
-    //Check if field is valid TODO: Add own validation
-    if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD || (type == FIELDTYPE_EMAIL && !isValidEmail(fieldText)) || (type == FIELDTYPE_NAME && !isValidName(fieldText))) {
+    //Check if field is valid
+    if (form_driver(m_pForm, REQ_VALIDATION) == E_INVALID_FIELD/* || (type == FIELDTYPE_EMAIL && !isValidEmail(fieldText)) || (type == FIELDTYPE_NAME && !isValidName(fieldText))*/) {
         //Field is invalid, highlight it
         set_field_back(current_field(m_pForm), A_STANDOUT);
         return false;
@@ -301,21 +306,22 @@ void DialogForm::addField(const std::string &lbl, int rows, int cols, int x, int
     m_curField++;
 }
 
-bool DialogForm::isValidName(const std::string text){
-    std::string str = text;
-    unsigned found =str.find_first_not_of("abcdefghijklmnopqrstuvwxyz'- ");
-    if (found != std::string::npos && str.length() > 0)
+bool DialogForm::isValidName(const std::string& text){
+//    std::string str = text;
+    unsigned found = text.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'- ");
+    if (found != std::string::npos && text.length() > 0) {
         return false;
+    }
     return true;
 }
 
-bool DialogForm::isValidEmail(const std::string text){
+bool DialogForm::isValidEmail(const std::string& text){
     std::string str = text;
-    unsigned found = str.find_first_not_of("abcdefghijklmnopqrstuvwxyz1234567890_-@.");
+    unsigned found = str.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-@.");
     if (found != std::string::npos)
         return false;
     found = str.find_first_of('@');
     if ((found == std::string::npos || str.find_first_of('@', found+1) != std::string::npos) && str.length() > 0)
-	return false;
+        return false;
     return true;
 }

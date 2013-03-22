@@ -4,13 +4,27 @@
 #include "Table.h"
 #include "Label.h"
 #include "TaApplication.h"
+#include "Queue.h"
 
-MenuWorkExperience::MenuWorkExperience(const std::string& title) : Panel(title, 70) {
+MenuWorkExperience::MenuWorkExperience(const std::string& title, TaApplication* pApp) : Panel(title, 70) {
     setReturnState(STATE_ERROR);
     std::string labels[] = {"Job", "Description", "Start Date", "End Date"};
     int colWidths[] = {16, 32, 8, 8};
+    
     m_pWorkExperienceTable = new Table(this, 1, 4, 16, 4, colWidths, labels);
+    if (pApp != 0) {
+        //Add work exp. to table
+        {
+            Node<TaApplication::WorkExperience>* pCur = pApp->getWorkExperience();
+            while (pCur != 0) {
+                std::string pData[4] = {pCur->value.m_job, pCur->value.m_description, pCur->value.m_start, pCur->value.m_end};
+                m_pWorkExperienceTable->addRow(pData);
+                pCur = pCur->m_pNext;
+            }
+        }
+    }
     add(m_pWorkExperienceTable);
+    
     add(new Label(this, "Work Experience", m_pWorkExperienceTable->getX(), 3));
     add(new Label(this, "Cancel: F3", 1, getHeight() - 2));
     add(new Label(this, "Continue: F2", getWidth() - 13, getHeight() - 2));

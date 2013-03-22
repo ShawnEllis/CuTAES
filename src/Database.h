@@ -11,11 +11,11 @@
 #define DATABASE_H
 
 #include <string>
+#include "TaApplication.h"
 
 template <class T>
 class Queue;
 class Student;
-class TaApplication;
 
 class Database {
 public:
@@ -29,8 +29,10 @@ public:
     
     Student* getStudent(const std::string& stuID);
     Queue<TaApplication*>* getApplications(const std::string& str);
+    Queue<TaApplication*>* getApplications(const std::string& str, ApplicationStatus appStatus);
     
     void replaceStudent(Student *pExisting, Student *pNew);
+    void replaceApplication(TaApplication *pExisting, TaApplication *pNew);
     
     static Database *instance();
     

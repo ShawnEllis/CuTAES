@@ -12,11 +12,20 @@ DialogListSelector::DialogListSelector(const std::string& title, const std::stri
     
     //Create buttons for each research area
     Button *pButton;
+    std::string label;
+    bool enabled;
     for (int i = 0; i < count; i++) {
-        //TODO: Put buttons in scrollable panel
-        pButton = new Button(this, values[i], getWidth() / 2, 4 + 3*i, 6, 1);
+        label = values[i];
+        if (label[0] == '~') {
+            label = label.substr(1);
+            enabled = false;
+        } else {
+            enabled = true;
+        }
+        pButton = new Button(this, label, getWidth() / 2, 4 + 3*i, 6, 1);
         pButton->setEventHandler(handleSelection);
         pButton->setUsrPtr(this);
+        pButton->setEnabled(enabled);
         this->add(pButton);
     }
     setHeight(pButton->getY() + pButton->getHeight() + 1);
@@ -46,20 +55,24 @@ bool DialogListSelector::handleKeyPress(int key) {
     } else if (key == KEY_UP) {
         //Override panel's default navigation
         //Select prev item
-        m_pSelNode->data->setSelected(false);
-        m_pSelNode = (m_pSelNode->pPrev != 0) ? m_pSelNode->pPrev : m_pSelectableList->last();
-        m_pSelNode->data->setSelected(true);
-        scrollScreen();
-        draw();
+        if (m_pSelNode != 0) {
+            m_pSelNode->data->setSelected(false);
+            m_pSelNode = (m_pSelNode->pPrev != 0) ? m_pSelNode->pPrev : m_pSelectableList->last();
+            m_pSelNode->data->setSelected(true);
+            scrollScreen();
+            draw();
+        }
         return true;
     } else if (key == KEY_DOWN) {
         //Override panel's default navigation
         //Select next item
-        m_pSelNode->data->setSelected(false);
-        m_pSelNode = (m_pSelNode->pNext != 0) ? m_pSelNode->pNext : m_pSelectableList->first();
-        m_pSelNode->data->setSelected(true);
-        scrollScreen();
-        draw();
+        if (m_pSelNode != 0) {
+            m_pSelNode->data->setSelected(false);
+            m_pSelNode = (m_pSelNode->pNext != 0) ? m_pSelNode->pNext : m_pSelectableList->first();
+            m_pSelNode->data->setSelected(true);
+            scrollScreen();
+            draw();
+        }
         return true;
     }
 

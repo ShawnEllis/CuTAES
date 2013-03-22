@@ -60,8 +60,8 @@ private:
     bool isDataValid();
     bool isFieldValid();
 
-    bool isValidName(const std::string text);
-    bool isValidEmail(const std::string text);
+    bool isValidName(const std::string& text);
+    bool isValidEmail(const std::string& text);
 
 };
 

@@ -20,6 +20,7 @@ public:
     
     static void handleBackPressed(Button *pButton);
     static void handleSummaryPressed(Button *pButton);
+    static void handleAssignPressed(Button *pButton);
     
 private:
     MenuStartAdmin();

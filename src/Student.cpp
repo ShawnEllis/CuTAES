@@ -4,6 +4,7 @@
 #include "CuTAES.h"
 #include "Queue.h"
 #include "TaApplication.h"
+#include "Queue.h"
 #ifdef DEBUG
 extern std::ofstream dout;
 #endif //DEBUG
@@ -22,7 +23,20 @@ void Student::addApplication(TaApplication *pApp) {
     m_pApplications->pushBack(pApp);
 }
 
+void Student::setApplications(Queue<TaApplication*>* pApplications) {
+    if (pApplications == 0) {
+        return;
+    }
+    if (m_pApplications != 0) {
+        delete m_pApplications;
+    }
+    m_pApplications = new Queue<TaApplication*>(*pApplications);
+}
+
 bool Student::hasAppliedForCourse(const std::string &course) {
+    if (m_pApplications == 0 || m_pApplications->isEmpty()) {
+        return 0;
+    }
     Node<TaApplication*> *pCur = m_pApplications->front();
     while (pCur != 0) {
         if (pCur->value->getCourse().compare(course) == 0) {

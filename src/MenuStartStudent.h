@@ -20,6 +20,7 @@ public:
     
     static void handleBackPressed(Button *pButton);
     static void handleCreatePressed(Button *pButton);
+    static void handleEditPressed(Button *pButton);
     
 private:
     bool m_undergrad;

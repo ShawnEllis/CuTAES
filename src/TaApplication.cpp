@@ -1,17 +1,32 @@
 #include "TaApplication.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <time.h>
 
 #include "Queue.h"
 #include "CuTAES.h"
 
-TaApplication::TaApplication(const std::string& course, const std::string& studentID) {
+TaApplication::TaApplication(const std::string& course, const std::string& studentID, const std::string& status, const std::string& appID) {
     m_course = course;
     m_studentID = studentID;
-    m_status = "pending";
+    if (status.compare("accepted") == 0) {
+        m_status = STATUS_ACCEPTED;
+    } else if (status.compare("closed") == 0) {
+        m_status = STATUS_CLOSED;        
+    } else {
+        m_status = STATUS_PENDING;
+    }
     m_pRelatedCourses = new Queue<RelatedCourse>();
     m_pTaCourses = new Queue<TaCourse>();
     m_pWorkExperience = new Queue<WorkExperience>();
+    if (appID.compare("") == 0) {
+        std::stringstream id;
+        id << "app_" << m_course << "_" << time(NULL);
+        m_applicationID = id.str();
+    } else {
+        m_applicationID = appID;
+    }
 }
 
 void TaApplication::addRelatedCourse(const std::string &course, int year, char term, const std::string &grade) {
@@ -26,16 +41,27 @@ void TaApplication::addWorkExperience(const std::string &job, const std::string 
     m_pWorkExperience->pushBack((WorkExperience) {job, descr, start, end});
 }
 
-void TaApplication::saveToFile(const std::string& filename) {
-    //Create filename using system time
-    
-    
+Node<TaApplication::RelatedCourse>* TaApplication::getRelatedCourses() {
+    return m_pRelatedCourses->front();
+}
+
+Node<TaApplication::TaCourse>* TaApplication::getTaCourses() {
+    return m_pTaCourses->front();
+}
+
+Node<TaApplication::WorkExperience>* TaApplication::getWorkExperience() {
+    return m_pWorkExperience->front();
+}
+
+void TaApplication::saveToFile() {
+    std::string filename = CuTAES::instance()->getDataDirectory() + "application/" + m_applicationID + ".txt";
     std::ofstream file;
     file.open(filename.data());
     if (file.is_open()) {
+        file << m_applicationID << std::endl;
         file << m_course << std::endl;
         file << m_studentID << std::endl;
-        file << m_status << std::endl;
+        file << getStrStatus() << std::endl;
         file << "related" << std::endl;        
         {
             //Save related courses
