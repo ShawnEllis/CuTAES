@@ -36,7 +36,7 @@ public:
         m_pFirst = 0;
         m_pLast = 0;
         m_size = 0;
-        Node<T> *currpQueueNode = pQueue->front();
+        Node<T> *currpQueueNode = pQueue.m_pFirst;
         while (currpQueueNode != 0){
           pushBack(currpQueueNode->value);
           currpQueueNode = currpQueueNode->m_pNext;
@@ -214,7 +214,7 @@ public:
     }
 
     Queue<T>& operator-=(const Queue<T>& queue){
-      if (queue->isEmpty() || isEmpty) return this; // if either queue is empty
+      if (queue->isEmpty() || isEmpty()) return this; // if either queue is empty
       Node<T> *nodeToDel = queue->front();
       while (nodeToDel != 0){
         this -= nodeToDel->value;
