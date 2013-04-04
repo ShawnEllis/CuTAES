@@ -23,7 +23,7 @@ const int CuTAES::KEY_ENT = 10;
 CuTAES* CuTAES::m_pInstance = 0;
 
 CuTAES::CuTAES() {
-    m_workingDirectory = /*"/Users/zdawson/Library/Developer/Xcode/DerivedData/shared/Products/Debug/";*/"./";
+    m_workingDirectory = "/Users/zdawson/Library/Developer/Xcode/DerivedData/shared/Products/Debug/";//"./";
 #ifdef DEBUG
     dout.open((m_workingDirectory + "debugOut.txt").data());
     dout << "Start CuTAES" << std::endl;

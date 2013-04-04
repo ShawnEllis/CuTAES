@@ -13,10 +13,11 @@
 extern std::ofstream dout;
 #endif //DEBUG
 
-DialogForm::DialogForm(const std::string &title, int numFields) : Panel(title), m_numFields(numFields) {
+DialogForm::DialogForm(const std::string &title, int numFields, bool allowEmpty) : Panel(title), m_numFields(numFields) {
     m_curField = 0;
     m_rows = 0;
     m_cols = 0;
+    allowEmptyFields = allowEmpty;
     
     //Create field array, init to null
     m_pFields = new FIELD*[numFields + 1];
@@ -189,7 +190,7 @@ bool DialogForm::isDataValid() {
     for (int i = 0; i < m_numFields; i++) {
         std::string str = field_buffer(m_pFields[i], 0);
         StringUtil::trimEnd(str);
-        if (!isFieldValid() || str.compare("") == 0) {
+        if (!isFieldValid() || (!allowEmptyFields && str.compare("") == 0)) {
             return false;
         }
     }

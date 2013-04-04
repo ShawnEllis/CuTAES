@@ -96,7 +96,7 @@ void MenuViewApplication::handleSearchStuPressed(Button *pButton) {
         bool isDataValid = pForm->getFormData(&data);
         delete pForm;
         if (isDataValid) {
-            //Find application
+            //Find student
             Student* pStu = Database::instance()->getStudent(data[0]);
             if (pStu != 0) {
                 Queue<TaApplication*>* pApplications = pStu->getApplications();
@@ -112,7 +112,7 @@ void MenuViewApplication::handleSearchStuPressed(Button *pButton) {
                     }
                     //Show the dialog
                     DialogListSelector *pDia = new DialogListSelector("View Application", pStrApplications, i);
-                    if (pDia->show() == STATE_SUCCESS) {
+                    while (pDia->show() == STATE_SUCCESS) {
                         std::string strApplication = pDia->getSelectedValue();
                         
                         //Find the selected application
@@ -150,7 +150,7 @@ void MenuViewApplication::handleSearchStuPressed(Button *pButton) {
 
 void MenuViewApplication::handleSearchNamePressed(Button *pButton) {
     //Show Dialog Form w/ student num field
-    DialogForm *pForm = new DialogForm("Enter Student Name (First/Last/Both)", 1);    
+    DialogForm *pForm = new DialogForm("Enter Student Name (First/Last/Both)", 2, true);    
     pForm->addField("First Name: ", "", 1, 32, FIELDTYPE_ALPHA);
     pForm->addField("Last Name:  ", "", 1, 32, FIELDTYPE_ALPHA);
     //Show student dialog
@@ -159,9 +159,73 @@ void MenuViewApplication::handleSearchNamePressed(Button *pButton) {
         std::string *data = 0;
         bool isDataValid = pForm->getFormData(&data);
         delete pForm;
-        if (isDataValid) {
-            //Find application
-            
+        if (isDataValid && data != 0) {
+            //Ensure one field is filled in
+            if (data[0].compare("") == 0 && data[1].compare("") == 0) {
+                DialogYesNo* pDia = new DialogYesNo("You must fill in at least one field.", DIALOG_MESSAGE);
+                pDia->show();
+                delete pDia;
+                return;
+            }
+            //Find student by name
+            Student* pStu = 0;
+            Queue<Student*>* pStudents = Database::instance()->getStudents();
+            Node<Student*>* pCur = pStudents->front();
+            while (pCur != 0) {
+                if ((data[0].compare("") == 0 || pCur->value->getFirstName().compare(data[0]) == 0)
+                    && (data[1].compare("") == 0 || pCur->value->getLastName().compare(data[1]) == 0)) {
+                    pStu = pCur->value;
+                    break;
+                }
+                pCur = pCur->m_pNext;
+            }
+            if (pStu != 0) {
+                Queue<TaApplication*>* pApplications = pStu->getApplications();
+                if (pApplications != 0 && pApplications->getSize() > 0) {
+                    //Create str[] from queue for listDialog
+                    std::string* pStrApplications = new std::string[pApplications->getSize()];
+                    Node<TaApplication*>* pCur = pApplications->front();
+                    int i = 0;
+                    while (pCur != 0) {
+                        pStrApplications[i] = pCur->value->getApplicationID();
+                        i++;
+                        pCur = pCur->m_pNext;
+                    }
+                    //Show the dialog
+                    DialogListSelector *pDia = new DialogListSelector(
+                        "View Application: " + pStu->getFirstName() + " " + pStu->getLastName(), pStrApplications, i);
+                    while (pDia->show() == STATE_SUCCESS) {
+                        std::string strApplication = pDia->getSelectedValue();
+                        
+                        //Find the selected application
+                        TaApplication* pApp = 0;
+                        pCur = pApplications->front();
+                        while (pCur != 0) {
+                            if (strApplication.find(pCur->value->getApplicationID()) != std::string::npos) {
+                                pApp = pCur->value;
+                            }
+                            pCur = pCur->m_pNext;
+                        }
+                        if (pApp != 0) {
+                            //Show application
+                            MenuCreateApplication *pCreateApplication = new MenuCreateApplication(pApp,
+                                Database::instance()->getStudent(pApp->getStudentID())->getType() == TYPE_GRAD, false);
+                            pCreateApplication->show();
+                            delete pCreateApplication;
+                        }
+                    }
+                    delete [] pStrApplications;
+                    delete pDia;
+                } else {
+                    DialogYesNo* pDia = new DialogYesNo("No applications to display.", DIALOG_MESSAGE);
+                    pDia->show();
+                    delete pDia;
+                }
+            } else {
+                DialogYesNo* pDia = new DialogYesNo("Student not found.", DIALOG_MESSAGE);
+                pDia->show();
+                delete pDia;
+            }
         }
     }
 }
