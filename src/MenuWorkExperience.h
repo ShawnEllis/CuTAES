@@ -9,7 +9,7 @@ class TaApplication;
 
 class MenuWorkExperience : public Panel {
 public:
-    MenuWorkExperience(const std::string& title, TaApplication* pApp = 0);
+    MenuWorkExperience(const std::string& title, TaApplication* pApp = 0, bool editable=true);
     virtual ~MenuWorkExperience();
 
     virtual bool getData(TaApplication*);

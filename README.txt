@@ -8,3 +8,4 @@ CuTAES uses ncurses with the form and panel libraries. To run, make it then eith
 
 If the View an Application feature looks messed up, you need to resize your terminal. You will need to do some action (hit up key / enter etc) to refresh the screen. I suggest starting the program with the terminal fullscreened to avoid any issues.
 
+testCases.cpp is not in src, make with it for testing.

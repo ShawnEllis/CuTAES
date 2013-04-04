@@ -2,61 +2,55 @@ Start CuTAES
 Loading students...
 Loading student ./data/student/100851846.txt
 Loaded student 100851846
-Loading student ./data/student/100888111.txt
-Loaded student 100888111
-Loading student ./data/student/100888888.txt
-Loaded student 100888888
-Loading student ./data/student/100000000.txt
-Loaded student 100000000
-Loading student ./data/student/100888555.txt
-Loaded student 100888555
-Loading student ./data/student/100101010.txt
-Loaded student 100101010
+Loading student ./data/student/100111111.txt
+Loaded student 100111111
 Loading student ./data/student/100123456.txt
 Loaded student 100123456
-Loading student ./data/student/100100100.txt
-Loaded student 100100100
-Loading student ./data/student/
-Loaded student 
+Loading student ./data/student/100333333.txt
+Loaded student 100333333
+Loading student ./data/student/100999999.txt
+Loaded student 100999999
+Loading student ./data/student/100101010.txt
+Loaded student 100101010
+Loading student ./data/student/100007007.txt
+Loaded student 100007007
+Loading student ./data/student/100987654.txt
+Loaded student 100987654
+Loading student ./data/student/100555666.txt
+Loaded student 100555666
 Loaded students.
 Loading applications...
-Loading application ./data/application/app_COMP1405_1360939536.txt
+Loading application ./data/application/app_COMP1405_1363712431.txt
 Loaded application COMP1405 100851846
-Loading application ./data/application/app_COMP1405_1360939732.txt
-Loaded application COMP1405 100888555
-Loading application ./data/application/app_COMP1406_1360940003.txt
+Loading application ./data/application/app_COMP1406_1363712423.txt
 Loaded application COMP1406 100851846
-Loading application ./data/application/app_COMP2401_1360940038.txt
-Loaded application COMP2401 100851846
-Loading application ./data/application/app_COMP1405_1360940469.txt
-Loaded application COMP1405 100101010
-Loading application ./data/application/app_COMP1406_1360940878.txt
-Loaded application COMP1406 100123456
-Loading application ./data/application/app_COMP2401_1360941546.txt
-Loaded application COMP2401 100100100
-Loading application ./data/application/app_COMP1406_1360941621.txt
-Loaded application COMP1406 100100100
-Loading application ./data/application/
-Loaded application  
+Loading application ./data/application/app_COMP1405_1363802065.txt
+Loaded application COMP1405 100111111
+Loading application ./data/application/app_COMP1501_1363802088.txt
+Loaded application COMP1501 100111111
+Loading application ./data/application/app_COMP1405_1363809157.txt
+Loaded application COMP1405 100123456
+Loading application ./data/application/app_COMP1405_1363869804.txt
+Loaded application COMP1405 100333333
+Loading application ./data/application/app_COMP1406_1363869825.txt
+Loaded application COMP1406 100333333
+Loading application ./data/application/app_COMP2401_1363870436.txt
+Loaded application COMP2401 100999999
+Loading application ./data/application/app_COMP2402_1363870677.txt
+Loaded application COMP2402 100999999
+Loading application ./data/application/app_COMP2501_1363870830.txt
+Loaded application COMP2501 100101010
+Loading application ./data/application/app_COMP1405_1363871373.txt
+Loaded application COMP1405 100007007
+Loading application ./data/application/app_COMP2401_1363871861.txt
+Loaded application COMP2401 100987654
+Loading application ./data/application/app_COMP2401_1363956577.txt
+Loaded application COMP2401 100555666
 Loaded applications.
 Show panel CuTAES- Carleton University TA Application & Enrollment System
-Show panel Student: Select an Action
-Show panel Create Application: Select a Course
-Show panel Enter Student Info
-Form Enter Student Info data: 
-   0a
-   1a
-   21
-   31
-   41
-   51
-   61
-   71
-Student: Saving to ./data/student/1.txt
-Student: Saved.
-Show panel Create COMP1405 Application: Enter Course Info
-Show panel Create COMP1405 Application: Enter Work Experience
-Show panel Apply for another course?
 Show panel Administrator: Select an Action
-Show panel Create Application: Select a Course
-Show panel COMP1405: Pending Applications
+Show panel View Application
+Show panel Enter Student ID
+Form Enter Student ID data: 
+   0100851846
+Show panel View Application

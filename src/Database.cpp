@@ -1,4 +1,6 @@
 #include "Database.h"
+#include <string>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -76,6 +78,22 @@ Queue<TaApplication*>* Database::getApplications(const std::string &course, Appl
             pApp = pApp->m_pNext;
         }
         return pTrimmedApplications;
+    }
+    return 0;
+}
+
+TaApplication* Database::findApplication(const std::string& strID) {
+    //Get course
+    std::string strCourse = strID.substr(4, 8);
+    Queue<TaApplication*>* pApplications = getApplications(strCourse);
+    if (pApplications != 0) {
+        Node<TaApplication*>* pApp = pApplications->front();
+        while (pApp != 0) {
+            if (pApp->value->getApplicationID().compare(strID) == 0) {
+                return pApp->value;
+            }
+            pApp = pApp->m_pNext;
+        }
     }
     return 0;
 }
@@ -287,9 +305,9 @@ void Database::loadApplication(const std::string &filename) {
             getline(file, line4); //Grade
             StringUtil::trim(line4);
             if (parseType == 'r') {
-                pApp->addRelatedCourse(line1, std::atoi(line2.data()), line3[0], line4);
+                pApp->addRelatedCourse(line1, atoi(line2.data()), line3[0], line4);
             } else if (parseType == 't') {
-                pApp->addTaCourse(line1, std::atoi(line2.data()), line3[0], line4);                
+                pApp->addTaCourse(line1, atoi(line2.data()), line3[0], line4);                
             } else {
                 pApp->addWorkExperience(line1, line2, line3, line4);
             }

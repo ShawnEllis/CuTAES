@@ -1,9 +1,0 @@
-undergrad
-Test
-Student
-100000000
-teststudent@email.com
-Comp Sci
-2
-10
-10

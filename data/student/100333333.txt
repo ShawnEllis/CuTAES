@@ -1,0 +1,9 @@
+undergrad
+John
+Johnson
+100333333
+fake@email.com
+Comp Sci
+2
+8
+8

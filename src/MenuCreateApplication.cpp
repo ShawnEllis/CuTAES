@@ -27,7 +27,7 @@ MenuCreateApplication::MenuCreateApplication(const std::string& course, const st
 /*
  * Constructor for edit-style menu
  */
-MenuCreateApplication::MenuCreateApplication(TaApplication *pApp, bool isGraduate) : Panel("Edit Application: Enter Course Info", 70) {
+MenuCreateApplication::MenuCreateApplication(TaApplication *pApp, bool isGraduate, bool editable) : Panel("Edit Application: Enter Course Info", 70) {
     setReturnState(STATE_ERROR);
     if (pApp == 0) {
         return;
@@ -35,7 +35,7 @@ MenuCreateApplication::MenuCreateApplication(TaApplication *pApp, bool isGraduat
     m_pApplication = pApp;
     m_strCourse = pApp->getCourse();
     m_strStudentID = pApp->getStudentID();
-    init(isGraduate);
+    init(isGraduate, editable);
     //Add related courses to table
     {
         Node<TaApplication::RelatedCourse>* pCur = pApp->getRelatedCourses();
@@ -56,7 +56,8 @@ MenuCreateApplication::MenuCreateApplication(TaApplication *pApp, bool isGraduat
             pCur = pCur->m_pNext;
         }
     }
-    m_pWorkExperienceMenu = new MenuWorkExperience("Edit Application: Enter Work Experience", pApp);
+    
+    m_pWorkExperienceMenu = new MenuWorkExperience("Edit Application: Enter Work Experience", pApp, editable);
     if (pRelatedCoursesTable != 0) {
         add(pRelatedCoursesTable);
     }
@@ -68,12 +69,12 @@ MenuCreateApplication::MenuCreateApplication(TaApplication *pApp, bool isGraduat
 /*
  * Init components
  */
-void MenuCreateApplication::init(bool isGraduate) {
+void MenuCreateApplication::init(bool isGraduate, bool editable) {
     //Create related courses table
     if (!isGraduate) {
         std::string labels[] = {"Course", "Year", "Term", "Grade"};
         int colWidths[] = {8, 4, 4, 5};
-        pRelatedCoursesTable = new Table(this, 3, 4, 15, 4, colWidths, labels);
+        pRelatedCoursesTable = new Table(this, 3, 4, 15, 4, colWidths, labels, editable);
     } else {
         pRelatedCoursesTable = 0;
     }
@@ -81,7 +82,7 @@ void MenuCreateApplication::init(bool isGraduate) {
     std::string labels[] = {"Course", "Year", "Term", "Supervisor"};
     int colWidths[] = {8, 4, 4, 16};
     int x = isGraduate ? getWidth()/2-18 : pRelatedCoursesTable->getX() +  pRelatedCoursesTable->getWidth() + 1;
-    pTaCoursesTable = new Table(this, x, 4, 15, 4, colWidths, labels);
+    pTaCoursesTable = new Table(this, x, 4, 15, 4, colWidths, labels, editable);
     
     //Create labels
     if (!isGraduate) {

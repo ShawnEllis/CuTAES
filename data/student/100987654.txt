@@ -1,0 +1,9 @@
+undergrad
+Tom
+C
+100987654
+fake@email.com
+CS
+3
+10
+10
