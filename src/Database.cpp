@@ -1,4 +1,5 @@
 #include "Database.h"
+#include <string>
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -304,9 +305,9 @@ void Database::loadApplication(const std::string &filename) {
             getline(file, line4); //Grade
             StringUtil::trim(line4);
             if (parseType == 'r') {
-                pApp->addRelatedCourse(line1, std::atoi(line2.data()), line3[0], line4);
+                pApp->addRelatedCourse(line1, atoi(line2.data()), line3[0], line4);
             } else if (parseType == 't') {
-                pApp->addTaCourse(line1, std::atoi(line2.data()), line3[0], line4);                
+                pApp->addTaCourse(line1, atoi(line2.data()), line3[0], line4);                
             } else {
                 pApp->addWorkExperience(line1, line2, line3, line4);
             }

@@ -93,7 +93,7 @@ void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     
     //Show list of applications
     if (pButton->getUsrPtr() == 0) {
-        exit(-1);
+        return;
     }
     ApplicationStatus* appStatus = (ApplicationStatus*)(pButton->getUsrPtr());
     MenuViewSummary *pViewSummary = new MenuViewSummary(strCourse + ": Pending Applications", strCourse, *appStatus);
@@ -178,7 +178,7 @@ void MenuStartAdmin::handleAssignPressed(Button *pButton) {
     }
     Student *pStu = Database::instance()->getStudent(pApp->getStudentID());
     if (pStu == 0) {
-        exit(-1);
+        return;
     }
     if (pStu->getApplications() != 0 && pStu->getApplications()->getSize() > 1) {
         pCur = pStu->getApplications()->front();
