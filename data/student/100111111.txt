@@ -1,9 +1,9 @@
 undergrad
-Zack
-Dawson
-100851846
+Jim
+Raynor
+100111111
 fake@email.com
 Computer Science
-2
-11.5
-11
+3
+9.2
+9

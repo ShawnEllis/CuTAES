@@ -32,7 +32,7 @@ enum FieldType {
 
 class DialogForm : public Panel {
 public:
-    DialogForm(const std::string &title, int numFields);
+    DialogForm(const std::string &title, int numFields, bool allowEmpty=false);
     virtual ~DialogForm();
     
     virtual StateType show();
@@ -62,6 +62,7 @@ private:
 
     bool isValidName(const std::string& text);
     bool isValidEmail(const std::string& text);
+    bool allowEmptyFields;
 
 };
 

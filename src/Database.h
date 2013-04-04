@@ -28,8 +28,10 @@ public:
     void addApplication(TaApplication *pApplication, bool save=true);
     
     Student* getStudent(const std::string& stuID);
+    Queue<Student*>* getStudents() { return m_pStudentQueue; }
     Queue<TaApplication*>* getApplications(const std::string& str);
     Queue<TaApplication*>* getApplications(const std::string& str, ApplicationStatus appStatus);
+    TaApplication* findApplication(const std::string& strID);
     
     void replaceStudent(Student *pExisting, Student *pNew);
     void replaceApplication(TaApplication *pExisting, TaApplication *pNew);
@@ -39,7 +41,7 @@ public:
 private:
     Database();
     
-    Queue<Student*> *m_pStudentQueue;
+    Queue<Student*>* m_pStudentQueue;
     Queue<Queue<TaApplication*>*>* m_pApplicationQueue;
     
     std::string *m_courses, *m_researchAreas;

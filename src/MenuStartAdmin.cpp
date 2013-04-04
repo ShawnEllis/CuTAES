@@ -3,6 +3,7 @@
 #include "DialogListSelector.h"
 #include "MenuViewSummary.h"
 #include "DialogYesNo.h"
+#include "MenuViewApplication.h"
 
 #include "Database.h"
 #include "TaApplication.h"
@@ -22,7 +23,7 @@ MenuStartAdmin::MenuStartAdmin() : Panel("Administrator: Select an Action") {
     //Create buttons
     
     Button *pButton = new Button(this, "View an Application ", CuTAES::DEF_W / 2, CuTAES::DEF_H/2 - 7, 10, 1);
-    pButton->setEnabled(false);
+    pButton->setEventHandler(handleViewPressed);
     this->add(pButton);
     
     pButton = new Button(this, "View Summary of Pending Applications",
@@ -61,6 +62,13 @@ void MenuStartAdmin::handleBackPressed(Button *pButton) {
     MenuStartAdmin::instance()->hide();
 }
 
+void MenuStartAdmin::handleViewPressed(Button *pButton) {
+    MenuStartAdmin::instance()->erase();
+    MenuViewApplication *pMnu = new MenuViewApplication();
+    pMnu->show();
+    delete pMnu;
+}
+
 void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     MenuStartAdmin::instance()->erase();
     
@@ -85,7 +93,7 @@ void MenuStartAdmin::handleSummaryPressed(Button *pButton) {
     
     //Show list of applications
     if (pButton->getUsrPtr() == 0) {
-        exit(-1);
+        return;
     }
     ApplicationStatus* appStatus = (ApplicationStatus*)(pButton->getUsrPtr());
     MenuViewSummary *pViewSummary = new MenuViewSummary(strCourse + ": Pending Applications", strCourse, *appStatus);
@@ -170,7 +178,7 @@ void MenuStartAdmin::handleAssignPressed(Button *pButton) {
     }
     Student *pStu = Database::instance()->getStudent(pApp->getStudentID());
     if (pStu == 0) {
-        exit(-1);
+        return;
     }
     if (pStu->getApplications() != 0 && pStu->getApplications()->getSize() > 1) {
         pCur = pStu->getApplications()->front();

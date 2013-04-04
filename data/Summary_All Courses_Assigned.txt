@@ -1,0 +1,52 @@
+--Summary of Assigned Applications for All Courses--
+
+COMP1405
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+|Zack      |Dawson          |100851846       |fake@email.com                  |Computer Science                |2            |11.5|11       |
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
+
+
+COMP1406
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
+
+
+COMP1501
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
+
+
+COMP2401
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
+|George    |Takei           |100999999       |fake@email.com                  |Other                           |Shatner             |PhD    |
+
+
+COMP2402
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
+
+
+COMP2404
+
+
+
+COMP2406
+
+
+
+COMP2501
+
+|Student ID|First Name      |Last Name       |Email                           |Major                           |Year Standing|CGPA|Major GPA|
+
+|Student ID|First Name      |Last Name       |Email                           |Research Area                   |Supervisor          |Program|
