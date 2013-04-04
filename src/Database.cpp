@@ -80,6 +80,22 @@ Queue<TaApplication*>* Database::getApplications(const std::string &course, Appl
     return 0;
 }
 
+TaApplication* Database::findApplication(const std::string& strID) {
+    //Get course
+    std::string strCourse = strID.substr(4, 8);
+    Queue<TaApplication*>* pApplications = getApplications(strCourse);
+    if (pApplications != 0) {
+        Node<TaApplication*>* pApp = pApplications->front();
+        while (pApp != 0) {
+            if (pApp->value->getApplicationID().compare(strID) == 0) {
+                return pApp->value;
+            }
+            pApp = pApp->m_pNext;
+        }
+    }
+    return 0;
+}
+
 /*
  * Database addition / editing / removal
  */

@@ -19,6 +19,7 @@ public:
     virtual ~MenuStartAdmin();
     
     static void handleBackPressed(Button *pButton);
+    static void handleViewPressed(Button *pButton);
     static void handleSummaryPressed(Button *pButton);
     static void handleAssignPressed(Button *pButton);
     

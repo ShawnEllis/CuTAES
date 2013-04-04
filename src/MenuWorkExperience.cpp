@@ -6,12 +6,12 @@
 #include "TaApplication.h"
 #include "Queue.h"
 
-MenuWorkExperience::MenuWorkExperience(const std::string& title, TaApplication* pApp) : Panel(title, 70) {
+MenuWorkExperience::MenuWorkExperience(const std::string& title, TaApplication* pApp, bool editable) : Panel(title, 70) {
     setReturnState(STATE_ERROR);
     std::string labels[] = {"Job", "Description", "Start Date", "End Date"};
     int colWidths[] = {16, 32, 8, 8};
     
-    m_pWorkExperienceTable = new Table(this, 1, 4, 16, 4, colWidths, labels);
+    m_pWorkExperienceTable = new Table(this, 1, 4, 16, 4, colWidths, labels, editable);
     if (pApp != 0) {
         //Add work exp. to table
         {

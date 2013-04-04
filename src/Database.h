@@ -30,6 +30,7 @@ public:
     Student* getStudent(const std::string& stuID);
     Queue<TaApplication*>* getApplications(const std::string& str);
     Queue<TaApplication*>* getApplications(const std::string& str, ApplicationStatus appStatus);
+    TaApplication* findApplication(const std::string& strID);
     
     void replaceStudent(Student *pExisting, Student *pNew);
     void replaceApplication(TaApplication *pExisting, TaApplication *pNew);
