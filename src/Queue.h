@@ -142,7 +142,7 @@ public:
     
     int getSize() const {return m_size;}
     
-    bool isEmpty() {return m_pFirst == 0;}
+    bool isEmpty() const {return m_pFirst == 0;}
         
     /*
      *  Returns data at index
@@ -197,13 +197,13 @@ public:
      *  remove data from queue
     */
     Queue<T>& operator-=(T *t){
-      if (t == 0) return *this; // if t is null
+      if (t == NULL) return *this; // if t is null
       if (isEmpty()) return *this; // if queue is empty
       Node<T> *currNode, *prevNode;
       prevNode = 0;
       currNode = front();
       while (currNode != 0){
-        if (currNode->value == t) break;
+        if (currNode->value == *t) break;
         prevNode = currNode;
         currNode = currNode->m_pNext;
       }
@@ -219,10 +219,10 @@ public:
     }
 
     Queue<T>& operator-=(const Queue<T>& queue){
-      if (queue->isEmpty() || isEmpty()) return *this; // if either queue is empty
+      if (queue.isEmpty() || (*this).isEmpty()) return *this; // if either queue is empty
       Node<T> *nodeToDel = queue.front();
       while (nodeToDel != 0){
-        this -= nodeToDel->value;
+        *this -= &(nodeToDel->value);
         nodeToDel = nodeToDel->m_pNext;
       }
       return *this;
@@ -231,13 +231,13 @@ public:
     Queue<T>& operator-(T *t){
       Queue<T>* newQueue = new Queue<T>(*this);
       *newQueue -= t;
-      return newQueue;
+      return *newQueue;
     }
 
     Queue<T>& operator-(const Queue<T>& queue){
       Queue<T>* newQueue = new Queue<T>(*this);
       *newQueue -= queue;
-      return newQueue;
+      return *newQueue;
     }
 
     void operator!(){
