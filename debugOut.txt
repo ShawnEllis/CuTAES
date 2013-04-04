@@ -48,3 +48,9 @@ Loading application ./data/application/app_COMP2401_1363956577.txt
 Loaded application COMP2401 100555666
 Loaded applications.
 Show panel CuTAES- Carleton University TA Application & Enrollment System
+Show panel Administrator: Select an Action
+Show panel View Application
+Show panel Enter Student ID
+Form Enter Student ID data: 
+   0100851846
+Show panel View Application
